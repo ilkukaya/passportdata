@@ -1,0 +1,156 @@
+---
+import { SUPPORTED_LANGS, useTranslations, getToolPageAlternateLinks, isRTL, type Lang } from '../../utils/i18n';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+
+export function getStaticPaths() {
+  return SUPPORTED_LANGS.map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as Lang);
+const alternateLinks = getToolPageAlternateLinks('schengen-calculator');
+
+const title = t('seo.schengen_title');
+const description = t('seo.schengen_description');
+
+const breadcrumbs = [
+  { label: t('nav.home'), href: `/${lang}/` },
+  { label: t('nav.schengen') },
+];
+---
+
+<BaseLayout {title} {description} lang={lang!} {alternateLinks} rtl={isRTL(lang as Lang)}>
+  <BreadcrumbNav items={breadcrumbs} lang={lang!} />
+
+  <section class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white py-10">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-2xl md:text-3xl font-bold mb-2">{t('tools.schengen_title')}</h1>
+      <p class="text-blue-200">{t('tools.schengen_subtitle')}</p>
+    </div>
+  </section>
+
+  <section class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-sm border p-6">
+        <div class="mb-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Your Schengen visits (last 180 days)</h2>
+
+          <div id="visits-container">
+            <div class="visit-row grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Entry date</label>
+                <input type="date" class="entry-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Exit date</label>
+                <input type="date" class="exit-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <button id="add-visit" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mt-2">
+            + Add another visit
+          </button>
+        </div>
+
+        <button
+          id="calculate-btn"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors"
+        >
+          Calculate
+        </button>
+
+        <div id="result" class="hidden mt-6 p-6 rounded-xl text-center">
+          <div class="text-sm text-gray-500 mb-1">Days used in current 180-day window</div>
+          <div id="days-used" class="text-4xl font-bold text-gray-900 mb-2"></div>
+          <div class="text-sm text-gray-500 mb-1">Days remaining</div>
+          <div id="days-remaining" class="text-4xl font-bold mb-4"></div>
+          <div id="next-entry" class="text-sm text-gray-600"></div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-200">
+        <h3 class="font-bold text-blue-900 mb-2">About the 90/180 day rule</h3>
+        <p class="text-sm text-blue-800">
+          Non-EU nationals can stay in the Schengen Area for a maximum of 90 days within any 180-day period.
+          This is a rolling window — the 180-day period is counted backwards from each day of presence in the Schengen area.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.getElementById('add-visit')?.addEventListener('click', () => {
+    const container = document.getElementById('visits-container');
+    const row = document.createElement('div');
+    row.className = 'visit-row grid grid-cols-2 gap-3 mb-3';
+    row.innerHTML = `
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Entry date</label>
+        <input type="date" class="entry-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Exit date</label>
+        <input type="date" class="exit-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
+      </div>
+    `;
+    container?.appendChild(row);
+  });
+
+  document.getElementById('calculate-btn')?.addEventListener('click', () => {
+    const entries = document.querySelectorAll('.entry-date');
+    const exits = document.querySelectorAll('.exit-date');
+    const visits: { entry: Date; exit: Date }[] = [];
+
+    entries.forEach((el, i) => {
+      const entry = (el as HTMLInputElement).value;
+      const exit = (exits[i] as HTMLInputElement).value;
+      if (entry && exit) {
+        visits.push({ entry: new Date(entry), exit: new Date(exit) });
+      }
+    });
+
+    if (visits.length === 0) return;
+
+    const today = new Date();
+    const windowStart = new Date(today);
+    windowStart.setDate(windowStart.getDate() - 180);
+
+    let daysUsed = 0;
+    visits.forEach(v => {
+      const effectiveStart = v.entry < windowStart ? windowStart : v.entry;
+      const effectiveEnd = v.exit > today ? today : v.exit;
+      if (effectiveStart <= effectiveEnd) {
+        daysUsed += Math.ceil((effectiveEnd.getTime() - effectiveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      }
+    });
+
+    const remaining = Math.max(0, 90 - daysUsed);
+
+    const resultEl = document.getElementById('result');
+    const usedEl = document.getElementById('days-used');
+    const remainingEl = document.getElementById('days-remaining');
+    const nextEl = document.getElementById('next-entry');
+
+    if (resultEl && usedEl && remainingEl && nextEl) {
+      usedEl.textContent = `${daysUsed} / 90`;
+      remainingEl.textContent = String(remaining);
+      remainingEl.className = `text-4xl font-bold mb-4 ${remaining > 30 ? 'text-green-600' : remaining > 0 ? 'text-yellow-600' : 'text-red-600'}`;
+      resultEl.className = `mt-6 p-6 rounded-xl text-center ${remaining > 30 ? 'bg-green-50' : remaining > 0 ? 'bg-yellow-50' : 'bg-red-50'}`;
+
+      if (remaining === 0) {
+        // Calculate when the oldest visit exits the 180-day window
+        const oldest = visits.sort((a, b) => a.entry.getTime() - b.entry.getTime())[0];
+        const reentry = new Date(oldest.exit);
+        reentry.setDate(reentry.getDate() + 181);
+        nextEl.textContent = `You can re-enter from: ${reentry.toLocaleDateString()}`;
+      } else {
+        nextEl.textContent = `You can stay ${remaining} more days in the current window.`;
+      }
+      resultEl.classList.remove('hidden');
+    }
+  });
+</script>

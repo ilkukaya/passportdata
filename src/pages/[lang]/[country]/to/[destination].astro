@@ -1,0 +1,163 @@
+---
+import visaMatrix from '../../../../data/visa_matrix.json';
+import countries from '../../../../data/countries.json';
+import { SUPPORTED_LANGS, useTranslations, getCountrySlug, getVisaStatusColor, isRTL, type Lang } from '../../../../utils/i18n';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../../../../components/BreadcrumbNav.astro';
+import AdSenseSlot from '../../../../components/AdSenseSlot.astro';
+import AffiliateBanner from '../../../../components/AffiliateBanner.astro';
+
+export function getStaticPaths() {
+  const paths: any[] = [];
+  const matrixData = (visaMatrix as any).data;
+
+  for (const lang of SUPPORTED_LANGS) {
+    for (const [originCode, destinations] of Object.entries(matrixData)) {
+      if (!(countries as any)[originCode]) continue;
+      const originSlug = getCountrySlug(originCode, lang, countries);
+      for (const [destCode, visaInfo] of Object.entries(destinations as Record<string, any>)) {
+        if (!(countries as any)[destCode]) continue;
+        const destSlug = getCountrySlug(destCode, lang, countries);
+        paths.push({
+          params: { lang, country: originSlug, destination: destSlug },
+          props: { originCode, destCode, visaInfo, lang },
+        });
+      }
+    }
+  }
+  return paths;
+}
+
+const { originCode, destCode, visaInfo, lang } = Astro.props;
+const t = useTranslations(lang as Lang);
+const currentYear = new Date().getFullYear();
+
+const originData = (countries as any)[originCode];
+const destData = (countries as any)[destCode];
+const originName = originData?.names?.[lang] || originData?.names?.en || originCode;
+const destName = destData?.names?.[lang] || destData?.names?.en || destCode;
+const originSlug = getCountrySlug(originCode, lang as Lang, countries);
+const destSlug = getCountrySlug(destCode, lang as Lang, countries);
+
+const title = t('seo.bilateral_title', { origin: originName, destination: destName, year: String(currentYear) });
+const description = t('seo.bilateral_description', { origin: originName, destination: destName, year: String(currentYear) });
+
+// Alternate links for this bilateral page
+const alternateLinks: Record<string, string> = {};
+for (const l of SUPPORTED_LANGS) {
+  const oSlug = getCountrySlug(originCode, l, countries);
+  const dSlug = getCountrySlug(destCode, l, countries);
+  alternateLinks[l] = `/${l}/${oSlug}/to/${dSlug}/`;
+}
+
+const breadcrumbs = [
+  { label: t('nav.home'), href: `/${lang}/` },
+  { label: originName, href: `/${lang}/${originSlug}/` },
+  { label: destName },
+];
+
+const isVisaRequired = visaInfo.status === 'visa_required';
+
+// Other destinations from this origin (sample)
+const allDests = Object.entries((visaMatrix as any).data[originCode] || {})
+  .filter(([code]) => code !== destCode && (countries as any)[code])
+  .slice(0, 12)
+  .map(([code, info]: [string, any]) => ({
+    code,
+    name: (countries as any)[code]?.names?.[lang] || code,
+    flag_url: (countries as any)[code]?.flag_url,
+    slug: getCountrySlug(code, lang as Lang, countries),
+    status: info.status,
+  }));
+---
+
+<BaseLayout {title} {description} {lang} {alternateLinks} rtl={isRTL(lang as Lang)}>
+  <BreadcrumbNav items={breadcrumbs} {lang} />
+
+  <section class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+      <!-- Origin → Destination Header -->
+      <div class="bg-white rounded-2xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center justify-center gap-4 mb-6">
+          <div class="text-center">
+            <img src={originData?.flag_url} alt={originName} class="w-16 h-11 mx-auto rounded shadow object-cover mb-2" />
+            <p class="font-bold text-gray-900">{originName}</p>
+            <p class="text-xs text-gray-500">{t('bilateral.from')}</p>
+          </div>
+          <div class="text-3xl text-gray-300">→</div>
+          <div class="text-center">
+            <img src={destData?.flag_url} alt={destName} class="w-16 h-11 mx-auto rounded shadow object-cover mb-2" />
+            <p class="font-bold text-gray-900">{destName}</p>
+            <p class="text-xs text-gray-500">{t('bilateral.to')}</p>
+          </div>
+        </div>
+
+        <!-- Visa Status Card -->
+        <div class={`rounded-xl p-6 text-center ${getVisaStatusColor(visaInfo.status)}`}>
+          <p class="text-sm font-medium uppercase tracking-wide mb-1">{t('bilateral.visa_status')}</p>
+          <p class="text-2xl font-bold">{t(`status.${visaInfo.status}`)}</p>
+        </div>
+
+        <!-- Details -->
+        <div class="grid grid-cols-2 gap-4 mt-6">
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">{t('bilateral.max_stay')}</p>
+            <p class="text-xl font-bold text-gray-900">
+              {visaInfo.days ? `${visaInfo.days} ${t('table.days')}` : '-'}
+            </p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">{t('bilateral.notes')}</p>
+            <p class="text-sm text-gray-700 mt-1">{visaInfo.notes || '-'}</p>
+          </div>
+        </div>
+
+        {isVisaRequired && (
+          <div class="mt-6 text-center">
+            <a
+              href={`https://ivisa.com/?ref=REFID`}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl transition-colors"
+            >
+              {t('bilateral.apply_now')} →
+            </a>
+          </div>
+        )}
+      </div>
+
+      <a href={`/${lang}/${originSlug}/`} class="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium mb-6">
+        ← {t('bilateral.back_to_dashboard', { country: originName })}
+      </a>
+
+      <AdSenseSlot slot_id="ADSENSE_SLOT_4" />
+
+      <!-- Other destinations -->
+      {allDests.length > 0 && (
+        <div class="mt-8">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">
+            {t('bilateral.other_destinations', { country: originName })}
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {allDests.map(d => (
+              <a
+                href={`/${lang}/${originSlug}/to/${d.slug}/`}
+                class="flex items-center gap-3 bg-white rounded-lg border p-3 hover:shadow-sm transition-shadow"
+              >
+                <img src={d.flag_url} alt={d.name} class="w-8 h-5 object-cover rounded" loading="lazy" />
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate">{d.name}</p>
+                  <span class={`visa-badge visa-badge-${d.status} text-xs`}>
+                    {t(`status.${d.status}`)}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <AffiliateBanner {lang} showIvisa={isVisaRequired} />
+</BaseLayout>

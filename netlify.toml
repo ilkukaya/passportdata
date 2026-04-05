@@ -1,0 +1,32 @@
+[build]
+  publish = "dist"
+
+[[redirects]]
+  from = "/"
+  to = "/en/"
+  status = 302
+
+[[redirects]]
+  from = "/tr"
+  to = "/tr/"
+  status = 301
+
+[[redirects]]
+  from = "/es"
+  to = "/es/"
+  status = 301
+
+[[redirects]]
+  from = "/ar"
+  to = "/ar/"
+  status = 301
+
+[[redirects]]
+  from = "/pt"
+  to = "/pt/"
+  status = 301
+
+[[redirects]]
+  from = "/fr"
+  to = "/fr/"
+  status = 301

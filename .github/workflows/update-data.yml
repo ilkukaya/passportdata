@@ -1,0 +1,33 @@
+name: Weekly Visa Data Update
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install requests beautifulsoup4 pandas lxml
+
+      - name: Run visa data update
+        run: |
+          python src/scripts/fetch_passport_index.py
+          python src/scripts/fetch_henley.py
+
+      - name: Commit updated data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add src/data/
+          git diff --staged --quiet || git commit -m "chore: weekly visa data update $(date +%Y-%m-%d)"
+          git push

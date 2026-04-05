@@ -1,0 +1,450 @@
+{
+  "TR": {
+    "iso2": "TR", "iso3": "TUR",
+    "names": { "en": "Turkey", "tr": "Türkiye", "es": "Turquía", "ar": "تركيا", "pt": "Turquia", "fr": "Turquie" },
+    "slugs": { "en": "turkey", "tr": "turkiye", "es": "turquia", "ar": "turkya", "pt": "turquia", "fr": "turquie" },
+    "continent": "EU", "flag_emoji": "🇹🇷",
+    "flag_url": "https://flagcdn.com/w80/tr.png",
+    "henley_rank": 53, "capital": "Ankara"
+  },
+  "US": {
+    "iso2": "US", "iso3": "USA",
+    "names": { "en": "United States", "tr": "Amerika Birleşik Devletleri", "es": "Estados Unidos", "ar": "الولايات المتحدة", "pt": "Estados Unidos", "fr": "États-Unis" },
+    "slugs": { "en": "united-states", "tr": "amerika-birlesik-devletleri", "es": "estados-unidos", "ar": "alwilayat-almutahida", "pt": "estados-unidos", "fr": "etats-unis" },
+    "continent": "NA", "flag_emoji": "🇺🇸",
+    "flag_url": "https://flagcdn.com/w80/us.png",
+    "henley_rank": 6, "capital": "Washington D.C."
+  },
+  "DE": {
+    "iso2": "DE", "iso3": "DEU",
+    "names": { "en": "Germany", "tr": "Almanya", "es": "Alemania", "ar": "ألمانيا", "pt": "Alemanha", "fr": "Allemagne" },
+    "slugs": { "en": "germany", "tr": "almanya", "es": "alemania", "ar": "almaniya", "pt": "alemanha", "fr": "allemagne" },
+    "continent": "EU", "flag_emoji": "🇩🇪",
+    "flag_url": "https://flagcdn.com/w80/de.png",
+    "henley_rank": 2, "capital": "Berlin"
+  },
+  "GB": {
+    "iso2": "GB", "iso3": "GBR",
+    "names": { "en": "United Kingdom", "tr": "Birleşik Krallık", "es": "Reino Unido", "ar": "المملكة المتحدة", "pt": "Reino Unido", "fr": "Royaume-Uni" },
+    "slugs": { "en": "united-kingdom", "tr": "birlesik-krallik", "es": "reino-unido", "ar": "almamlaka-almutahida", "pt": "reino-unido", "fr": "royaume-uni" },
+    "continent": "EU", "flag_emoji": "🇬🇧",
+    "flag_url": "https://flagcdn.com/w80/gb.png",
+    "henley_rank": 4, "capital": "London"
+  },
+  "FR": {
+    "iso2": "FR", "iso3": "FRA",
+    "names": { "en": "France", "tr": "Fransa", "es": "Francia", "ar": "فرنسا", "pt": "França", "fr": "France" },
+    "slugs": { "en": "france", "tr": "fransa", "es": "francia", "ar": "faransa", "pt": "franca", "fr": "france" },
+    "continent": "EU", "flag_emoji": "🇫🇷",
+    "flag_url": "https://flagcdn.com/w80/fr.png",
+    "henley_rank": 5, "capital": "Paris"
+  },
+  "IN": {
+    "iso2": "IN", "iso3": "IND",
+    "names": { "en": "India", "tr": "Hindistan", "es": "India", "ar": "الهند", "pt": "Índia", "fr": "Inde" },
+    "slugs": { "en": "india", "tr": "hindistan", "es": "india", "ar": "alhind", "pt": "india", "fr": "inde" },
+    "continent": "AS", "flag_emoji": "🇮🇳",
+    "flag_url": "https://flagcdn.com/w80/in.png",
+    "henley_rank": 82, "capital": "New Delhi"
+  },
+  "CN": {
+    "iso2": "CN", "iso3": "CHN",
+    "names": { "en": "China", "tr": "Çin", "es": "China", "ar": "الصين", "pt": "China", "fr": "Chine" },
+    "slugs": { "en": "china", "tr": "cin", "es": "china", "ar": "alsin", "pt": "china", "fr": "chine" },
+    "continent": "AS", "flag_emoji": "🇨🇳",
+    "flag_url": "https://flagcdn.com/w80/cn.png",
+    "henley_rank": 62, "capital": "Beijing"
+  },
+  "JP": {
+    "iso2": "JP", "iso3": "JPN",
+    "names": { "en": "Japan", "tr": "Japonya", "es": "Japón", "ar": "اليابان", "pt": "Japão", "fr": "Japon" },
+    "slugs": { "en": "japan", "tr": "japonya", "es": "japon", "ar": "alyaban", "pt": "japao", "fr": "japon" },
+    "continent": "AS", "flag_emoji": "🇯🇵",
+    "flag_url": "https://flagcdn.com/w80/jp.png",
+    "henley_rank": 1, "capital": "Tokyo"
+  },
+  "BR": {
+    "iso2": "BR", "iso3": "BRA",
+    "names": { "en": "Brazil", "tr": "Brezilya", "es": "Brasil", "ar": "البرازيل", "pt": "Brasil", "fr": "Brésil" },
+    "slugs": { "en": "brazil", "tr": "brezilya", "es": "brasil", "ar": "albrazil", "pt": "brasil", "fr": "bresil" },
+    "continent": "SA", "flag_emoji": "🇧🇷",
+    "flag_url": "https://flagcdn.com/w80/br.png",
+    "henley_rank": 19, "capital": "Brasília"
+  },
+  "RU": {
+    "iso2": "RU", "iso3": "RUS",
+    "names": { "en": "Russia", "tr": "Rusya", "es": "Rusia", "ar": "روسيا", "pt": "Rússia", "fr": "Russie" },
+    "slugs": { "en": "russia", "tr": "rusya", "es": "rusia", "ar": "rusya", "pt": "russia", "fr": "russie" },
+    "continent": "EU", "flag_emoji": "🇷🇺",
+    "flag_url": "https://flagcdn.com/w80/ru.png",
+    "henley_rank": 49, "capital": "Moscow"
+  },
+  "NG": {
+    "iso2": "NG", "iso3": "NGA",
+    "names": { "en": "Nigeria", "tr": "Nijerya", "es": "Nigeria", "ar": "نيجيريا", "pt": "Nigéria", "fr": "Nigéria" },
+    "slugs": { "en": "nigeria", "tr": "nijerya", "es": "nigeria", "ar": "nijiriya", "pt": "nigeria", "fr": "nigeria" },
+    "continent": "AF", "flag_emoji": "🇳🇬",
+    "flag_url": "https://flagcdn.com/w80/ng.png",
+    "henley_rank": 96, "capital": "Abuja"
+  },
+  "PK": {
+    "iso2": "PK", "iso3": "PAK",
+    "names": { "en": "Pakistan", "tr": "Pakistan", "es": "Pakistán", "ar": "باكستان", "pt": "Paquistão", "fr": "Pakistan" },
+    "slugs": { "en": "pakistan", "tr": "pakistan", "es": "pakistan", "ar": "bakistan", "pt": "paquistao", "fr": "pakistan" },
+    "continent": "AS", "flag_emoji": "🇵🇰",
+    "flag_url": "https://flagcdn.com/w80/pk.png",
+    "henley_rank": 100, "capital": "Islamabad"
+  },
+  "BD": {
+    "iso2": "BD", "iso3": "BGD",
+    "names": { "en": "Bangladesh", "tr": "Bangladeş", "es": "Bangladés", "ar": "بنغلاديش", "pt": "Bangladesh", "fr": "Bangladesh" },
+    "slugs": { "en": "bangladesh", "tr": "banglades", "es": "bangladesh", "ar": "bangaladish", "pt": "bangladesh", "fr": "bangladesh" },
+    "continent": "AS", "flag_emoji": "🇧🇩",
+    "flag_url": "https://flagcdn.com/w80/bd.png",
+    "henley_rank": 99, "capital": "Dhaka"
+  },
+  "MX": {
+    "iso2": "MX", "iso3": "MEX",
+    "names": { "en": "Mexico", "tr": "Meksika", "es": "México", "ar": "المكسيك", "pt": "México", "fr": "Mexique" },
+    "slugs": { "en": "mexico", "tr": "meksika", "es": "mexico", "ar": "almaksik", "pt": "mexico", "fr": "mexique" },
+    "continent": "NA", "flag_emoji": "🇲🇽",
+    "flag_url": "https://flagcdn.com/w80/mx.png",
+    "henley_rank": 25, "capital": "Mexico City"
+  },
+  "IT": {
+    "iso2": "IT", "iso3": "ITA",
+    "names": { "en": "Italy", "tr": "İtalya", "es": "Italia", "ar": "إيطاليا", "pt": "Itália", "fr": "Italie" },
+    "slugs": { "en": "italy", "tr": "italya", "es": "italia", "ar": "italya", "pt": "italia", "fr": "italie" },
+    "continent": "EU", "flag_emoji": "🇮🇹",
+    "flag_url": "https://flagcdn.com/w80/it.png",
+    "henley_rank": 3, "capital": "Rome"
+  },
+  "CA": {
+    "iso2": "CA", "iso3": "CAN",
+    "names": { "en": "Canada", "tr": "Kanada", "es": "Canadá", "ar": "كندا", "pt": "Canadá", "fr": "Canada" },
+    "slugs": { "en": "canada", "tr": "kanada", "es": "canada", "ar": "kanada", "pt": "canada", "fr": "canada" },
+    "continent": "NA", "flag_emoji": "🇨🇦",
+    "flag_url": "https://flagcdn.com/w80/ca.png",
+    "henley_rank": 7, "capital": "Ottawa"
+  },
+  "KR": {
+    "iso2": "KR", "iso3": "KOR",
+    "names": { "en": "South Korea", "tr": "Güney Kore", "es": "Corea del Sur", "ar": "كوريا الجنوبية", "pt": "Coreia do Sul", "fr": "Corée du Sud" },
+    "slugs": { "en": "south-korea", "tr": "guney-kore", "es": "corea-del-sur", "ar": "kuriya-aljunubiya", "pt": "coreia-do-sul", "fr": "coree-du-sud" },
+    "continent": "AS", "flag_emoji": "🇰🇷",
+    "flag_url": "https://flagcdn.com/w80/kr.png",
+    "henley_rank": 2, "capital": "Seoul"
+  },
+  "AU": {
+    "iso2": "AU", "iso3": "AUS",
+    "names": { "en": "Australia", "tr": "Avustralya", "es": "Australia", "ar": "أستراليا", "pt": "Austrália", "fr": "Australie" },
+    "slugs": { "en": "australia", "tr": "avustralya", "es": "australia", "ar": "ustralya", "pt": "australia", "fr": "australie" },
+    "continent": "OC", "flag_emoji": "🇦🇺",
+    "flag_url": "https://flagcdn.com/w80/au.png",
+    "henley_rank": 8, "capital": "Canberra"
+  },
+  "ID": {
+    "iso2": "ID", "iso3": "IDN",
+    "names": { "en": "Indonesia", "tr": "Endonezya", "es": "Indonesia", "ar": "إندونيسيا", "pt": "Indonésia", "fr": "Indonésie" },
+    "slugs": { "en": "indonesia", "tr": "endonezya", "es": "indonesia", "ar": "indunisya", "pt": "indonesia", "fr": "indonesie" },
+    "continent": "AS", "flag_emoji": "🇮🇩",
+    "flag_url": "https://flagcdn.com/w80/id.png",
+    "henley_rank": 60, "capital": "Jakarta"
+  },
+  "PH": {
+    "iso2": "PH", "iso3": "PHL",
+    "names": { "en": "Philippines", "tr": "Filipinler", "es": "Filipinas", "ar": "الفلبين", "pt": "Filipinas", "fr": "Philippines" },
+    "slugs": { "en": "philippines", "tr": "filipinler", "es": "filipinas", "ar": "alfilbin", "pt": "filipinas", "fr": "philippines" },
+    "continent": "AS", "flag_emoji": "🇵🇭",
+    "flag_url": "https://flagcdn.com/w80/ph.png",
+    "henley_rank": 75, "capital": "Manila"
+  },
+  "AR": {
+    "iso2": "AR", "iso3": "ARG",
+    "names": { "en": "Argentina", "tr": "Arjantin", "es": "Argentina", "ar": "الأرجنتين", "pt": "Argentina", "fr": "Argentine" },
+    "slugs": { "en": "argentina", "tr": "arjantin", "es": "argentina", "ar": "alarzantin", "pt": "argentina", "fr": "argentine" },
+    "continent": "SA", "flag_emoji": "🇦🇷",
+    "flag_url": "https://flagcdn.com/w80/ar.png",
+    "henley_rank": 20, "capital": "Buenos Aires"
+  },
+  "EG": {
+    "iso2": "EG", "iso3": "EGY",
+    "names": { "en": "Egypt", "tr": "Mısır", "es": "Egipto", "ar": "مصر", "pt": "Egito", "fr": "Égypte" },
+    "slugs": { "en": "egypt", "tr": "misir", "es": "egipto", "ar": "misr", "pt": "egito", "fr": "egypte" },
+    "continent": "AF", "flag_emoji": "🇪🇬",
+    "flag_url": "https://flagcdn.com/w80/eg.png",
+    "henley_rank": 87, "capital": "Cairo"
+  },
+  "SA": {
+    "iso2": "SA", "iso3": "SAU",
+    "names": { "en": "Saudi Arabia", "tr": "Suudi Arabistan", "es": "Arabia Saudita", "ar": "المملكة العربية السعودية", "pt": "Arábia Saudita", "fr": "Arabie Saoudite" },
+    "slugs": { "en": "saudi-arabia", "tr": "suudi-arabistan", "es": "arabia-saudita", "ar": "almamlaka-alarabiya-alsaudiya", "pt": "arabia-saudita", "fr": "arabie-saoudite" },
+    "continent": "AS", "flag_emoji": "🇸🇦",
+    "flag_url": "https://flagcdn.com/w80/sa.png",
+    "henley_rank": 55, "capital": "Riyadh"
+  },
+  "UA": {
+    "iso2": "UA", "iso3": "UKR",
+    "names": { "en": "Ukraine", "tr": "Ukrayna", "es": "Ucrania", "ar": "أوكرانيا", "pt": "Ucrânia", "fr": "Ukraine" },
+    "slugs": { "en": "ukraine", "tr": "ukrayna", "es": "ucrania", "ar": "ukraniya", "pt": "ucrania", "fr": "ukraine" },
+    "continent": "EU", "flag_emoji": "🇺🇦",
+    "flag_url": "https://flagcdn.com/w80/ua.png",
+    "henley_rank": 35, "capital": "Kyiv"
+  },
+  "PL": {
+    "iso2": "PL", "iso3": "POL",
+    "names": { "en": "Poland", "tr": "Polonya", "es": "Polonia", "ar": "بولندا", "pt": "Polônia", "fr": "Pologne" },
+    "slugs": { "en": "poland", "tr": "polonya", "es": "polonia", "ar": "bulanda", "pt": "polonia", "fr": "pologne" },
+    "continent": "EU", "flag_emoji": "🇵🇱",
+    "flag_url": "https://flagcdn.com/w80/pl.png",
+    "henley_rank": 11, "capital": "Warsaw"
+  },
+  "NL": {
+    "iso2": "NL", "iso3": "NLD",
+    "names": { "en": "Netherlands", "tr": "Hollanda", "es": "Países Bajos", "ar": "هولندا", "pt": "Países Baixos", "fr": "Pays-Bas" },
+    "slugs": { "en": "netherlands", "tr": "hollanda", "es": "paises-bajos", "ar": "hulanda", "pt": "paises-baixos", "fr": "pays-bas" },
+    "continent": "EU", "flag_emoji": "🇳🇱",
+    "flag_url": "https://flagcdn.com/w80/nl.png",
+    "henley_rank": 5, "capital": "Amsterdam"
+  },
+  "BE": {
+    "iso2": "BE", "iso3": "BEL",
+    "names": { "en": "Belgium", "tr": "Belçika", "es": "Bélgica", "ar": "بلجيكا", "pt": "Bélgica", "fr": "Belgique" },
+    "slugs": { "en": "belgium", "tr": "belcika", "es": "belgica", "ar": "baljika", "pt": "belgica", "fr": "belgique" },
+    "continent": "EU", "flag_emoji": "🇧🇪",
+    "flag_url": "https://flagcdn.com/w80/be.png",
+    "henley_rank": 5, "capital": "Brussels"
+  },
+  "SE": {
+    "iso2": "SE", "iso3": "SWE",
+    "names": { "en": "Sweden", "tr": "İsveç", "es": "Suecia", "ar": "السويد", "pt": "Suécia", "fr": "Suède" },
+    "slugs": { "en": "sweden", "tr": "isvec", "es": "suecia", "ar": "alswid", "pt": "suecia", "fr": "suede" },
+    "continent": "EU", "flag_emoji": "🇸🇪",
+    "flag_url": "https://flagcdn.com/w80/se.png",
+    "henley_rank": 5, "capital": "Stockholm"
+  },
+  "CH": {
+    "iso2": "CH", "iso3": "CHE",
+    "names": { "en": "Switzerland", "tr": "İsviçre", "es": "Suiza", "ar": "سويسرا", "pt": "Suíça", "fr": "Suisse" },
+    "slugs": { "en": "switzerland", "tr": "isvicre", "es": "suiza", "ar": "swisra", "pt": "suica", "fr": "suisse" },
+    "continent": "EU", "flag_emoji": "🇨🇭",
+    "flag_url": "https://flagcdn.com/w80/ch.png",
+    "henley_rank": 3, "capital": "Bern"
+  },
+  "AT": {
+    "iso2": "AT", "iso3": "AUT",
+    "names": { "en": "Austria", "tr": "Avusturya", "es": "Austria", "ar": "النمسا", "pt": "Áustria", "fr": "Autriche" },
+    "slugs": { "en": "austria", "tr": "avusturya", "es": "austria", "ar": "alnamsa", "pt": "austria", "fr": "autriche" },
+    "continent": "EU", "flag_emoji": "🇦🇹",
+    "flag_url": "https://flagcdn.com/w80/at.png",
+    "henley_rank": 5, "capital": "Vienna"
+  },
+  "ES": {
+    "iso2": "ES", "iso3": "ESP",
+    "names": { "en": "Spain", "tr": "İspanya", "es": "España", "ar": "إسبانيا", "pt": "Espanha", "fr": "Espagne" },
+    "slugs": { "en": "spain", "tr": "ispanya", "es": "espana", "ar": "isbanya", "pt": "espanha", "fr": "espagne" },
+    "continent": "EU", "flag_emoji": "🇪🇸",
+    "flag_url": "https://flagcdn.com/w80/es.png",
+    "henley_rank": 3, "capital": "Madrid"
+  },
+  "PT": {
+    "iso2": "PT", "iso3": "PRT",
+    "names": { "en": "Portugal", "tr": "Portekiz", "es": "Portugal", "ar": "البرتغال", "pt": "Portugal", "fr": "Portugal" },
+    "slugs": { "en": "portugal", "tr": "portekiz", "es": "portugal", "ar": "alburtaghal", "pt": "portugal", "fr": "portugal" },
+    "continent": "EU", "flag_emoji": "🇵🇹",
+    "flag_url": "https://flagcdn.com/w80/pt.png",
+    "henley_rank": 5, "capital": "Lisbon"
+  },
+  "GR": {
+    "iso2": "GR", "iso3": "GRC",
+    "names": { "en": "Greece", "tr": "Yunanistan", "es": "Grecia", "ar": "اليونان", "pt": "Grécia", "fr": "Grèce" },
+    "slugs": { "en": "greece", "tr": "yunanistan", "es": "grecia", "ar": "alyunan", "pt": "grecia", "fr": "grece" },
+    "continent": "EU", "flag_emoji": "🇬🇷",
+    "flag_url": "https://flagcdn.com/w80/gr.png",
+    "henley_rank": 5, "capital": "Athens"
+  },
+  "CZ": {
+    "iso2": "CZ", "iso3": "CZE",
+    "names": { "en": "Czech Republic", "tr": "Çek Cumhuriyeti", "es": "República Checa", "ar": "جمهورية التشيك", "pt": "República Tcheca", "fr": "République tchèque" },
+    "slugs": { "en": "czech-republic", "tr": "cek-cumhuriyeti", "es": "republica-checa", "ar": "jumhuriyat-altshik", "pt": "republica-tcheca", "fr": "republique-tcheque" },
+    "continent": "EU", "flag_emoji": "🇨🇿",
+    "flag_url": "https://flagcdn.com/w80/cz.png",
+    "henley_rank": 5, "capital": "Prague"
+  },
+  "DK": {
+    "iso2": "DK", "iso3": "DNK",
+    "names": { "en": "Denmark", "tr": "Danimarka", "es": "Dinamarca", "ar": "الدنمارك", "pt": "Dinamarca", "fr": "Danemark" },
+    "slugs": { "en": "denmark", "tr": "danimarka", "es": "dinamarca", "ar": "aldanmark", "pt": "dinamarca", "fr": "danemark" },
+    "continent": "EU", "flag_emoji": "🇩🇰",
+    "flag_url": "https://flagcdn.com/w80/dk.png",
+    "henley_rank": 5, "capital": "Copenhagen"
+  },
+  "NO": {
+    "iso2": "NO", "iso3": "NOR",
+    "names": { "en": "Norway", "tr": "Norveç", "es": "Noruega", "ar": "النرويج", "pt": "Noruega", "fr": "Norvège" },
+    "slugs": { "en": "norway", "tr": "norvec", "es": "noruega", "ar": "alnarwij", "pt": "noruega", "fr": "norvege" },
+    "continent": "EU", "flag_emoji": "🇳🇴",
+    "flag_url": "https://flagcdn.com/w80/no.png",
+    "henley_rank": 5, "capital": "Oslo"
+  },
+  "FI": {
+    "iso2": "FI", "iso3": "FIN",
+    "names": { "en": "Finland", "tr": "Finlandiya", "es": "Finlandia", "ar": "فنلندا", "pt": "Finlândia", "fr": "Finlande" },
+    "slugs": { "en": "finland", "tr": "finlandiya", "es": "finlandia", "ar": "finlanda", "pt": "finlandia", "fr": "finlande" },
+    "continent": "EU", "flag_emoji": "🇫🇮",
+    "flag_url": "https://flagcdn.com/w80/fi.png",
+    "henley_rank": 5, "capital": "Helsinki"
+  },
+  "IE": {
+    "iso2": "IE", "iso3": "IRL",
+    "names": { "en": "Ireland", "tr": "İrlanda", "es": "Irlanda", "ar": "أيرلندا", "pt": "Irlanda", "fr": "Irlande" },
+    "slugs": { "en": "ireland", "tr": "irlanda", "es": "irlanda", "ar": "ayarlanda", "pt": "irlanda", "fr": "irlande" },
+    "continent": "EU", "flag_emoji": "🇮🇪",
+    "flag_url": "https://flagcdn.com/w80/ie.png",
+    "henley_rank": 5, "capital": "Dublin"
+  },
+  "NZ": {
+    "iso2": "NZ", "iso3": "NZL",
+    "names": { "en": "New Zealand", "tr": "Yeni Zelanda", "es": "Nueva Zelanda", "ar": "نيوزيلندا", "pt": "Nova Zelândia", "fr": "Nouvelle-Zélande" },
+    "slugs": { "en": "new-zealand", "tr": "yeni-zelanda", "es": "nueva-zelanda", "ar": "niwzilanda", "pt": "nova-zelandia", "fr": "nouvelle-zelande" },
+    "continent": "OC", "flag_emoji": "🇳🇿",
+    "flag_url": "https://flagcdn.com/w80/nz.png",
+    "henley_rank": 8, "capital": "Wellington"
+  },
+  "ZA": {
+    "iso2": "ZA", "iso3": "ZAF",
+    "names": { "en": "South Africa", "tr": "Güney Afrika", "es": "Sudáfrica", "ar": "جنوب أفريقيا", "pt": "África do Sul", "fr": "Afrique du Sud" },
+    "slugs": { "en": "south-africa", "tr": "guney-afrika", "es": "sudafrica", "ar": "janub-afriqya", "pt": "africa-do-sul", "fr": "afrique-du-sud" },
+    "continent": "AF", "flag_emoji": "🇿🇦",
+    "flag_url": "https://flagcdn.com/w80/za.png",
+    "henley_rank": 54, "capital": "Pretoria"
+  },
+  "TH": {
+    "iso2": "TH", "iso3": "THA",
+    "names": { "en": "Thailand", "tr": "Tayland", "es": "Tailandia", "ar": "تايلاند", "pt": "Tailândia", "fr": "Thaïlande" },
+    "slugs": { "en": "thailand", "tr": "tayland", "es": "tailandia", "ar": "tayiland", "pt": "tailandia", "fr": "thailande" },
+    "continent": "AS", "flag_emoji": "🇹🇭",
+    "flag_url": "https://flagcdn.com/w80/th.png",
+    "henley_rank": 64, "capital": "Bangkok"
+  },
+  "MY": {
+    "iso2": "MY", "iso3": "MYS",
+    "names": { "en": "Malaysia", "tr": "Malezya", "es": "Malasia", "ar": "ماليزيا", "pt": "Malásia", "fr": "Malaisie" },
+    "slugs": { "en": "malaysia", "tr": "malezya", "es": "malasia", "ar": "malyzya", "pt": "malasia", "fr": "malaisie" },
+    "continent": "AS", "flag_emoji": "🇲🇾",
+    "flag_url": "https://flagcdn.com/w80/my.png",
+    "henley_rank": 12, "capital": "Kuala Lumpur"
+  },
+  "SG": {
+    "iso2": "SG", "iso3": "SGP",
+    "names": { "en": "Singapore", "tr": "Singapur", "es": "Singapur", "ar": "سنغافورة", "pt": "Singapura", "fr": "Singapour" },
+    "slugs": { "en": "singapore", "tr": "singapur", "es": "singapur", "ar": "singhafura", "pt": "singapura", "fr": "singapour" },
+    "continent": "AS", "flag_emoji": "🇸🇬",
+    "flag_url": "https://flagcdn.com/w80/sg.png",
+    "henley_rank": 2, "capital": "Singapore"
+  },
+  "AE": {
+    "iso2": "AE", "iso3": "ARE",
+    "names": { "en": "United Arab Emirates", "tr": "Birleşik Arap Emirlikleri", "es": "Emiratos Árabes Unidos", "ar": "الإمارات العربية المتحدة", "pt": "Emirados Árabes Unidos", "fr": "Émirats arabes unis" },
+    "slugs": { "en": "united-arab-emirates", "tr": "birlesik-arap-emirlikleri", "es": "emiratos-arabes-unidos", "ar": "alimarat-alarabiya-almutahida", "pt": "emirados-arabes-unidos", "fr": "emirats-arabes-unis" },
+    "continent": "AS", "flag_emoji": "🇦🇪",
+    "flag_url": "https://flagcdn.com/w80/ae.png",
+    "henley_rank": 11, "capital": "Abu Dhabi"
+  },
+  "QA": {
+    "iso2": "QA", "iso3": "QAT",
+    "names": { "en": "Qatar", "tr": "Katar", "es": "Catar", "ar": "قطر", "pt": "Catar", "fr": "Qatar" },
+    "slugs": { "en": "qatar", "tr": "katar", "es": "catar", "ar": "qatar", "pt": "catar", "fr": "qatar" },
+    "continent": "AS", "flag_emoji": "🇶🇦",
+    "flag_url": "https://flagcdn.com/w80/qa.png",
+    "henley_rank": 53, "capital": "Doha"
+  },
+  "CL": {
+    "iso2": "CL", "iso3": "CHL",
+    "names": { "en": "Chile", "tr": "Şili", "es": "Chile", "ar": "تشيلي", "pt": "Chile", "fr": "Chili" },
+    "slugs": { "en": "chile", "tr": "sili", "es": "chile", "ar": "tshili", "pt": "chile", "fr": "chili" },
+    "continent": "SA", "flag_emoji": "🇨🇱",
+    "flag_url": "https://flagcdn.com/w80/cl.png",
+    "henley_rank": 16, "capital": "Santiago"
+  },
+  "CO": {
+    "iso2": "CO", "iso3": "COL",
+    "names": { "en": "Colombia", "tr": "Kolombiya", "es": "Colombia", "ar": "كولومبيا", "pt": "Colômbia", "fr": "Colombie" },
+    "slugs": { "en": "colombia", "tr": "kolombiya", "es": "colombia", "ar": "kulumbya", "pt": "colombia", "fr": "colombie" },
+    "continent": "SA", "flag_emoji": "🇨🇴",
+    "flag_url": "https://flagcdn.com/w80/co.png",
+    "henley_rank": 64, "capital": "Bogotá"
+  },
+  "PE": {
+    "iso2": "PE", "iso3": "PER",
+    "names": { "en": "Peru", "tr": "Peru", "es": "Perú", "ar": "بيرو", "pt": "Peru", "fr": "Pérou" },
+    "slugs": { "en": "peru", "tr": "peru", "es": "peru", "ar": "biru", "pt": "peru", "fr": "perou" },
+    "continent": "SA", "flag_emoji": "🇵🇪",
+    "flag_url": "https://flagcdn.com/w80/pe.png",
+    "henley_rank": 57, "capital": "Lima"
+  },
+  "KE": {
+    "iso2": "KE", "iso3": "KEN",
+    "names": { "en": "Kenya", "tr": "Kenya", "es": "Kenia", "ar": "كينيا", "pt": "Quênia", "fr": "Kenya" },
+    "slugs": { "en": "kenya", "tr": "kenya", "es": "kenia", "ar": "kinya", "pt": "quenia", "fr": "kenya" },
+    "continent": "AF", "flag_emoji": "🇰🇪",
+    "flag_url": "https://flagcdn.com/w80/ke.png",
+    "henley_rank": 73, "capital": "Nairobi"
+  },
+  "MA": {
+    "iso2": "MA", "iso3": "MAR",
+    "names": { "en": "Morocco", "tr": "Fas", "es": "Marruecos", "ar": "المغرب", "pt": "Marrocos", "fr": "Maroc" },
+    "slugs": { "en": "morocco", "tr": "fas", "es": "marruecos", "ar": "almaghrib", "pt": "marrocos", "fr": "maroc" },
+    "continent": "AF", "flag_emoji": "🇲🇦",
+    "flag_url": "https://flagcdn.com/w80/ma.png",
+    "henley_rank": 66, "capital": "Rabat"
+  },
+  "TN": {
+    "iso2": "TN", "iso3": "TUN",
+    "names": { "en": "Tunisia", "tr": "Tunus", "es": "Túnez", "ar": "تونس", "pt": "Tunísia", "fr": "Tunisie" },
+    "slugs": { "en": "tunisia", "tr": "tunus", "es": "tunez", "ar": "tunis", "pt": "tunisia", "fr": "tunisie" },
+    "continent": "AF", "flag_emoji": "🇹🇳",
+    "flag_url": "https://flagcdn.com/w80/tn.png",
+    "henley_rank": 76, "capital": "Tunis"
+  },
+  "IL": {
+    "iso2": "IL", "iso3": "ISR",
+    "names": { "en": "Israel", "tr": "İsrail", "es": "Israel", "ar": "إسرائيل", "pt": "Israel", "fr": "Israël" },
+    "slugs": { "en": "israel", "tr": "israil", "es": "israel", "ar": "israil", "pt": "israel", "fr": "israel" },
+    "continent": "AS", "flag_emoji": "🇮🇱",
+    "flag_url": "https://flagcdn.com/w80/il.png",
+    "henley_rank": 22, "capital": "Jerusalem"
+  },
+  "JO": {
+    "iso2": "JO", "iso3": "JOR",
+    "names": { "en": "Jordan", "tr": "Ürdün", "es": "Jordania", "ar": "الأردن", "pt": "Jordânia", "fr": "Jordanie" },
+    "slugs": { "en": "jordan", "tr": "urdun", "es": "jordania", "ar": "alurdunn", "pt": "jordania", "fr": "jordanie" },
+    "continent": "AS", "flag_emoji": "🇯🇴",
+    "flag_url": "https://flagcdn.com/w80/jo.png",
+    "henley_rank": 69, "capital": "Amman"
+  },
+  "VN": {
+    "iso2": "VN", "iso3": "VNM",
+    "names": { "en": "Vietnam", "tr": "Vietnam", "es": "Vietnam", "ar": "فيتنام", "pt": "Vietnã", "fr": "Viêt Nam" },
+    "slugs": { "en": "vietnam", "tr": "vietnam", "es": "vietnam", "ar": "vitnam", "pt": "vietna", "fr": "viet-nam" },
+    "continent": "AS", "flag_emoji": "🇻🇳",
+    "flag_url": "https://flagcdn.com/w80/vn.png",
+    "henley_rank": 55, "capital": "Hanoi"
+  },
+  "TW": {
+    "iso2": "TW", "iso3": "TWN",
+    "names": { "en": "Taiwan", "tr": "Tayvan", "es": "Taiwán", "ar": "تايوان", "pt": "Taiwan", "fr": "Taïwan" },
+    "slugs": { "en": "taiwan", "tr": "tayvan", "es": "taiwan", "ar": "taywan", "pt": "taiwan", "fr": "taiwan" },
+    "continent": "AS", "flag_emoji": "🇹🇼",
+    "flag_url": "https://flagcdn.com/w80/tw.png",
+    "henley_rank": 31, "capital": "Taipei"
+  },
+  "HK": {
+    "iso2": "HK", "iso3": "HKG",
+    "names": { "en": "Hong Kong", "tr": "Hong Kong", "es": "Hong Kong", "ar": "هونغ كونغ", "pt": "Hong Kong", "fr": "Hong Kong" },
+    "slugs": { "en": "hong-kong", "tr": "hong-kong", "es": "hong-kong", "ar": "hung-kung", "pt": "hong-kong", "fr": "hong-kong" },
+    "continent": "AS", "flag_emoji": "🇭🇰",
+    "flag_url": "https://flagcdn.com/w80/hk.png",
+    "henley_rank": 18, "capital": "Hong Kong"
+  }
+}

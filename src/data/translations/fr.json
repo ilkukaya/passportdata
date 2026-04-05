@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "visa_free": "Pays sans Visa",
+    "visa_on_arrival": "Visa à l'Arrivée",
+    "e_visa": "E-Visa",
+    "visa_required": "Visa Obligatoire",
+    "ranking": "Classement des Passeports",
+    "compare": "Comparer les Passeports",
+    "tools": "Outils",
+    "schengen": "Calculateur Schengen"
+  },
+  "hero": {
+    "title": "Jusqu'où votre passeport {country} peut-il vous emmener ?",
+    "subtitle": "Conditions de visa pour les titulaires d'un passeport {country} en {year}",
+    "henley_rank": "Classement de l'Indice Henley des Passeports",
+    "accessible": "Destinations accessibles"
+  },
+  "stats": {
+    "visa_free": "Sans Visa",
+    "visa_on_arrival": "Visa à l'Arrivée",
+    "e_visa": "E-Visa",
+    "visa_required": "Visa Obligatoire"
+  },
+  "table": {
+    "flag": "Drapeau",
+    "country": "Pays",
+    "continent": "Continent",
+    "visa_status": "Statut du Visa",
+    "stay_duration": "Séjour Max.",
+    "days": "jours",
+    "details": "Détails",
+    "search_placeholder": "Rechercher des pays...",
+    "no_results": "Aucun pays trouvé"
+  },
+  "status": {
+    "visa_free": "Sans Visa",
+    "visa_on_arrival": "Visa à l'Arrivée",
+    "e_visa": "E-Visa",
+    "visa_required": "Visa Obligatoire"
+  },
+  "continents": {
+    "all": "Tous",
+    "EU": "Europe",
+    "AS": "Asie",
+    "AF": "Afrique",
+    "NA": "Amérique du Nord",
+    "SA": "Amérique du Sud",
+    "OC": "Océanie"
+  },
+  "selector": {
+    "title": "Quelle est la puissance de votre passeport ?",
+    "subtitle": "Sélectionnez votre pays pour voir les conditions de visa pour toutes les destinations",
+    "choose_country": "Sélectionnez le pays de votre passeport",
+    "choose_language": "Choisissez votre langue",
+    "search_placeholder": "Rechercher un pays...",
+    "cta": "Voir les Conditions de Visa",
+    "popular": "Les plus recherchés"
+  },
+  "affiliate": {
+    "insurance_label": "Le Plus Populaire",
+    "insurance_title": "Assurance Voyage",
+    "insurance_desc": "Restez protégé à l'étranger. Couverture santé, bagages et annulation.",
+    "insurance_cta": "S'assurer",
+    "esim_label": "Activation Instantanée",
+    "esim_title": "eSIM International",
+    "esim_desc": "Internet à l'étranger sans carte SIM physique.",
+    "esim_cta": "Obtenir une eSIM",
+    "hotel_label": "Annulation Gratuite",
+    "hotel_title": "Meilleurs Prix d'Hôtels",
+    "hotel_desc": "Comparez les prix des hôtels dans le monde entier.",
+    "hotel_cta": "Trouver des Hôtels"
+  },
+  "seo": {
+    "home_title": "Pays sans Visa avec Passeport {country} {year} | PassportData",
+    "home_description": "Liste complète des pays que les titulaires d'un passeport {country} peuvent visiter sans visa en {year}. Inclut visa à l'arrivée, e-visa et toutes les conditions.",
+    "visa_free_title": "Pays sans Visa avec Passeport {country} {year}",
+    "voa_title": "Pays avec Visa à l'Arrivée pour Passeport {country} {year}",
+    "evisa_title": "Pays avec E-Visa pour Passeport {country} {year}",
+    "visa_required_title": "Pays Exigeant un Visa pour le Passeport {country} {year}",
+    "ranking_title": "Classement Mondial de la Puissance des Passeports {year} | Indice Henley",
+    "ranking_description": "Classement complet de la puissance des passeports pour {year}. Comparez la force du passeport par accès sans visa dans le monde entier.",
+    "compare_title": "Comparer les Passeports Côte à Côte {year} | PassportData",
+    "compare_description": "Comparez deux passeports côte à côte. Voyez les différences d'accès sans visa entre deux pays.",
+    "schengen_title": "Calculateur Schengen 90/180 Jours | PassportData",
+    "schengen_description": "Calculez vos jours restants dans l'espace Schengen. Suivez la règle des 90/180 jours pour les séjours sans visa.",
+    "bilateral_title": "Conditions de Visa de {origin} vers {destination} {year}",
+    "bilateral_description": "Les titulaires d'un passeport {origin} peuvent-ils se rendre à {destination} sans visa ? Conditions complètes de visa, durée de séjour et guide de demande pour {year}.",
+    "lang_home_title": "Conditions de Visa des Passeports dans le Monde {year} | PassportData",
+    "lang_home_description": "Vérifiez les conditions de visa pour n'importe quel passeport dans le monde. Pays sans visa, visa à l'arrivée, informations sur le e-visa pour {year}."
+  },
+  "footer": {
+    "description": "Informations précises sur les visas et les passeports pour les voyageurs du monde entier.",
+    "last_updated": "Dernière mise à jour",
+    "source": "Source : Indice Henley des Passeports, Passport Index",
+    "quick_links": "Liens Rapides",
+    "tools": "Outils",
+    "info": "Informations",
+    "about": "À propos",
+    "contact": "Contact",
+    "disclaimer": "Les informations sont fournies à titre de référence uniquement. Vérifiez toujours auprès des sources officielles de l'ambassade avant de voyager.",
+    "copyright": "© {year} PassportData. Tous droits réservés."
+  },
+  "tools": {
+    "schengen_title": "Calculateur de Séjour Schengen",
+    "schengen_subtitle": "Calculez vos jours restants dans l'espace Schengen selon la règle des 90/180 jours",
+    "compare_title": "Comparer les Passeports",
+    "compare_subtitle": "Sélectionnez deux passeports pour comparer leur accès sans visa côte à côte"
+  },
+  "ranking": {
+    "title": "Classement Mondial de la Puissance des Passeports {year}",
+    "subtitle": "Indice Henley des Passeports - Pays classés par accès sans visa",
+    "rank": "Rang",
+    "country": "Pays",
+    "visa_free_access": "Accès sans Visa",
+    "destinations": "destinations"
+  },
+  "bilateral": {
+    "from": "De",
+    "to": "Vers",
+    "visa_status": "Statut du Visa",
+    "max_stay": "Séjour Maximum",
+    "notes": "Notes",
+    "back_to_dashboard": "Retour au tableau de bord {country}",
+    "apply_now": "Faire une Demande de Visa",
+    "other_destinations": "Autres destinations depuis {country}"
+  },
+  "category_pages": {
+    "visa_free_heading": "Pays que les titulaires d'un passeport {country} peuvent visiter sans visa",
+    "voa_heading": "Pays offrant un visa à l'arrivée aux titulaires d'un passeport {country}",
+    "evisa_heading": "Pays offrant un e-Visa aux titulaires d'un passeport {country}",
+    "visa_required_heading": "Pays exigeant un visa pour les titulaires d'un passeport {country}",
+    "count_label": "{count} pays",
+    "apply_visa": "Besoin d'un visa ? Faites votre demande en ligne"
+  }
+}

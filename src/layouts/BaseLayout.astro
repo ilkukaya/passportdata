@@ -1,0 +1,85 @@
+---
+import SEOHead from '../components/SEOHead.astro';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import { useTranslations, isRTL, type Lang } from '../utils/i18n';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: string;
+  alternateLinks?: Record<string, string>;
+  rtl?: boolean;
+}
+
+const { title, description, lang, alternateLinks, rtl } = Astro.props;
+const t = useTranslations(lang as Lang);
+const dir = rtl || isRTL(lang as Lang) ? 'rtl' : 'ltr';
+const currentYear = new Date().getFullYear();
+---
+
+<!DOCTYPE html>
+<html lang={lang} dir={dir}>
+  <SEOHead {title} {description} {lang} {alternateLinks} />
+  <body class="min-h-screen bg-gray-50 font-sans antialiased">
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <a href={`/${lang}/`} class="text-xl font-bold text-indigo-700 flex items-center gap-2">
+          <span>🛂</span>
+          <span>PassportData</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <div class="hidden md:flex items-center gap-4 text-sm">
+            <a href={`/${lang}/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.home')}</a>
+            <a href={`/${lang}/passport-ranking/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.ranking')}</a>
+            <a href={`/${lang}/compare/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.compare')}</a>
+            <a href={`/${lang}/schengen-calculator/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.schengen')}</a>
+          </div>
+          <LanguageSwitcher {lang} {alternateLinks} />
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="bg-gray-900 text-gray-300 py-12 mt-16">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <h3 class="text-white font-bold text-lg mb-3">🛂 PassportData</h3>
+            <p class="text-gray-400 text-sm">{t('footer.description')}</p>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-3">{t('footer.quick_links')}</h4>
+            <ul class="space-y-2 text-sm">
+              <li><a href={`/${lang}/passport-ranking/`} class="hover:text-white transition-colors">{t('nav.ranking')}</a></li>
+              <li><a href={`/${lang}/compare/`} class="hover:text-white transition-colors">{t('nav.compare')}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-3">{t('footer.tools')}</h4>
+            <ul class="space-y-2 text-sm">
+              <li><a href={`/${lang}/schengen-calculator/`} class="hover:text-white transition-colors">{t('nav.schengen')}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-800 pt-6">
+          <p class="text-sm text-gray-500 text-center">
+            {t('footer.last_updated')}: {new Date().toLocaleDateString(lang)} | {t('footer.source')}
+          </p>
+          <p class="text-xs text-gray-600 mt-2 text-center">{t('footer.disclaimer')}</p>
+          <p class="text-xs text-gray-600 mt-1 text-center">
+            {t('footer.copyright', { year: String(currentYear) })}
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Mobile menu toggle -->
+    <script>
+      // Mobile navigation could be added here if needed
+    </script>
+  </body>
+</html>

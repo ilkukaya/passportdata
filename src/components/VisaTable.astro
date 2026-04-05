@@ -1,0 +1,188 @@
+---
+import { useTranslations, getVisaStatusColor, getCountrySlug, type Lang } from '../utils/i18n';
+
+interface Props {
+  visaData: Record<string, any>;
+  countries: Record<string, any>;
+  lang: string;
+  countryCode: string;
+  filterStatus?: string;
+}
+
+const { visaData, countries, lang, countryCode, filterStatus } = Astro.props;
+const t = useTranslations(lang as Lang);
+
+let entries = Object.entries(visaData)
+  .filter(([code]) => countries[code])
+  .map(([code, data]) => ({
+    code,
+    name: countries[code]?.names?.[lang] || countries[code]?.names?.en || code,
+    flag_url: countries[code]?.flag_url || '',
+    continent: countries[code]?.continent || '',
+    status: (data as any).status,
+    days: (data as any).days,
+    notes: (data as any).notes || '',
+  }));
+
+if (filterStatus) {
+  entries = entries.filter(e => e.status === filterStatus);
+}
+
+entries.sort((a, b) => a.name.localeCompare(b.name, lang));
+
+const continents = ['all', 'EU', 'AS', 'AF', 'NA', 'SA', 'OC'];
+const countrySlug = getCountrySlug(countryCode, lang as Lang, countries);
+---
+
+<section class="container mx-auto px-4 py-8">
+  <!-- Filters -->
+  <div class="mb-6 flex flex-col md:flex-row gap-4">
+    <input
+      type="text"
+      id="visa-search"
+      placeholder={t('table.search_placeholder')}
+      class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none"
+    />
+    {!filterStatus && (
+      <div class="flex flex-wrap gap-2" id="status-filters">
+        <button data-status="all" class="filter-btn px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-600 text-white">
+          {t('continents.all')}
+        </button>
+        <button data-status="visa_free" class="filter-btn px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-green-100">
+          {t('stats.visa_free')}
+        </button>
+        <button data-status="visa_on_arrival" class="filter-btn px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-yellow-100">
+          {t('stats.visa_on_arrival')}
+        </button>
+        <button data-status="e_visa" class="filter-btn px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-blue-100">
+          {t('stats.e_visa')}
+        </button>
+        <button data-status="visa_required" class="filter-btn px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-red-100">
+          {t('stats.visa_required')}
+        </button>
+      </div>
+    )}
+  </div>
+
+  <!-- Continent filter -->
+  <div class="mb-4 flex flex-wrap gap-2" id="continent-filters">
+    {continents.map(c => (
+      <button
+        data-continent={c}
+        class:list={[
+          'continent-btn px-3 py-1 rounded-full text-xs font-medium transition-colors',
+          c === 'all' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+        ]}
+      >
+        {t(`continents.${c}`)}
+      </button>
+    ))}
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
+          <tr>
+            <th class="px-4 py-3 text-start">{t('table.flag')}</th>
+            <th class="px-4 py-3 text-start">{t('table.country')}</th>
+            <th class="px-4 py-3 text-start hidden md:table-cell">{t('table.continent')}</th>
+            <th class="px-4 py-3 text-start">{t('table.visa_status')}</th>
+            <th class="px-4 py-3 text-start">{t('table.stay_duration')}</th>
+            <th class="px-4 py-3 text-start hidden md:table-cell">{t('table.details')}</th>
+          </tr>
+        </thead>
+        <tbody id="visa-table-body">
+          {entries.map(entry => (
+            <tr
+              class="border-t hover:bg-gray-50 transition-colors visa-row"
+              data-name={entry.name.toLowerCase()}
+              data-status={entry.status}
+              data-continent={entry.continent}
+            >
+              <td class="px-4 py-3">
+                <img src={entry.flag_url} alt={entry.name} class="w-8 h-5 object-cover rounded" loading="lazy" />
+              </td>
+              <td class="px-4 py-3 font-medium">
+                <a href={`/${lang}/${countrySlug}/to/${getCountrySlug(entry.code, lang as Lang, countries)}/`} class="hover:text-indigo-600 transition-colors">
+                  {entry.name}
+                </a>
+              </td>
+              <td class="px-4 py-3 hidden md:table-cell text-gray-500">
+                {t(`continents.${entry.continent}`)}
+              </td>
+              <td class="px-4 py-3">
+                <span class={`visa-badge visa-badge-${entry.status}`}>
+                  {t(`status.${entry.status}`)}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-gray-600">
+                {entry.days ? `${entry.days} ${t('table.days')}` : '-'}
+              </td>
+              <td class="px-4 py-3 hidden md:table-cell text-gray-500 text-xs">
+                {entry.notes || '-'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div id="no-results" class="hidden p-8 text-center text-gray-500">
+      {t('table.no_results')}
+    </div>
+  </div>
+</section>
+
+<script>
+  const searchInput = document.getElementById('visa-search') as HTMLInputElement;
+  const rows = document.querySelectorAll('.visa-row') as NodeListOf<HTMLElement>;
+  const noResults = document.getElementById('no-results');
+  let activeStatus = 'all';
+  let activeContinent = 'all';
+
+  function filterRows() {
+    const query = searchInput?.value.toLowerCase() || '';
+    let visible = 0;
+    rows.forEach(row => {
+      const name = row.dataset.name || '';
+      const status = row.dataset.status || '';
+      const continent = row.dataset.continent || '';
+      const matchSearch = name.includes(query);
+      const matchStatus = activeStatus === 'all' || status === activeStatus;
+      const matchContinent = activeContinent === 'all' || continent === activeContinent;
+      const show = matchSearch && matchStatus && matchContinent;
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    if (noResults) noResults.classList.toggle('hidden', visible > 0);
+  }
+
+  searchInput?.addEventListener('input', filterRows);
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-indigo-600', 'text-white');
+        b.classList.add('bg-gray-100', 'text-gray-700');
+      });
+      btn.classList.remove('bg-gray-100', 'text-gray-700');
+      btn.classList.add('bg-indigo-600', 'text-white');
+      activeStatus = (btn as HTMLElement).dataset.status || 'all';
+      filterRows();
+    });
+  });
+
+  document.querySelectorAll('.continent-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.continent-btn').forEach(b => {
+        b.classList.remove('bg-indigo-100', 'text-indigo-700');
+        b.classList.add('bg-gray-100', 'text-gray-600');
+      });
+      btn.classList.remove('bg-gray-100', 'text-gray-600');
+      btn.classList.add('bg-indigo-100', 'text-indigo-700');
+      activeContinent = (btn as HTMLElement).dataset.continent || 'all';
+      filterRows();
+    });
+  });
+</script>

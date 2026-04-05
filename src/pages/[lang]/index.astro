@@ -1,0 +1,94 @@
+---
+import countries from '../../data/countries.json';
+import visaMatrix from '../../data/visa_matrix.json';
+import passportRanking from '../../data/passport_ranking.json';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CountrySelector from '../../components/CountrySelector.astro';
+import { SUPPORTED_LANGS, useTranslations, getCountrySlug, getToolPageAlternateLinks, type Lang } from '../../utils/i18n';
+
+export function getStaticPaths() {
+  return SUPPORTED_LANGS.map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as Lang);
+const currentYear = new Date().getFullYear();
+const alternateLinks = getToolPageAlternateLinks('');
+
+const title = t('seo.lang_home_title', { year: String(currentYear) });
+const description = t('seo.lang_home_description', { year: String(currentYear) });
+
+// All countries sorted by name
+const allCountriesSorted = Object.entries(countries as Record<string, any>)
+  .map(([code, data]) => ({
+    code,
+    name: data.names?.[lang] || data.names?.en || code,
+    flag_url: data.flag_url,
+    slug: getCountrySlug(code, lang as Lang, countries),
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name, lang));
+
+// Top passports for display
+const TOP_COUNTRIES = ['US', 'DE', 'GB', 'JP', 'FR', 'TR', 'IN', 'BR', 'CN', 'KR', 'CA', 'AU'];
+const topCountries = TOP_COUNTRIES
+  .filter(code => (countries as any)[code])
+  .map(code => {
+    const data = (countries as any)[code];
+    const visaData = (visaMatrix as any).data[code] || {};
+    const visaFreeCount = Object.values(visaData).filter((v: any) => v.status === 'visa_free').length;
+    return {
+      code,
+      name: data.names?.[lang] || data.names?.en || code,
+      flag_url: data.flag_url,
+      slug: getCountrySlug(code, lang as Lang, countries),
+      rank: (passportRanking as any)[code]?.rank || '-',
+      visaFree: visaFreeCount,
+    };
+  });
+---
+
+<BaseLayout {title} {description} lang={lang!} {alternateLinks}>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('selector.title')}</h1>
+      <p class="text-blue-200 text-lg mb-8 max-w-2xl mx-auto">{t('selector.subtitle')}</p>
+      <div class="max-w-md mx-auto">
+        <CountrySelector lang={lang!} />
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Passports -->
+  <section class="container mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">{t('selector.popular')}</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {topCountries.map(c => (
+        <a
+          href={`/${lang}/${c.slug}/`}
+          class="bg-white rounded-xl shadow-sm border p-4 text-center hover:shadow-md transition-shadow group"
+        >
+          <img src={c.flag_url} alt={c.name} class="w-12 h-8 mx-auto object-cover rounded mb-2" />
+          <h3 class="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors">{c.name}</h3>
+          <p class="text-xs text-gray-500 mt-1">#{c.rank} · {c.visaFree} {t('stats.visa_free')}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- All Countries -->
+  <section class="container mx-auto px-4 py-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">{t('selector.choose_country')}</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2" id="all-countries">
+      {allCountriesSorted.map(c => (
+        <a
+          href={`/${lang}/${c.slug}/`}
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors text-sm"
+        >
+          <img src={c.flag_url} alt={c.name} class="w-6 h-4 object-cover rounded-sm" loading="lazy" />
+          <span class="text-gray-700 truncate">{c.name}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

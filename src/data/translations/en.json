@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "home": "Home",
+    "visa_free": "Visa-Free Countries",
+    "visa_on_arrival": "Visa on Arrival",
+    "e_visa": "E-Visa",
+    "visa_required": "Visa Required",
+    "ranking": "Passport Ranking",
+    "compare": "Compare Passports",
+    "tools": "Tools",
+    "schengen": "Schengen Calculator"
+  },
+  "hero": {
+    "title": "How far can your {country} passport take you?",
+    "subtitle": "Visa requirements for {country} passport holders in {year}",
+    "henley_rank": "Henley Passport Index Rank",
+    "accessible": "Accessible destinations"
+  },
+  "stats": {
+    "visa_free": "Visa-Free",
+    "visa_on_arrival": "Visa on Arrival",
+    "e_visa": "E-Visa",
+    "visa_required": "Visa Required"
+  },
+  "table": {
+    "flag": "Flag",
+    "country": "Country",
+    "continent": "Continent",
+    "visa_status": "Visa Status",
+    "stay_duration": "Max Stay",
+    "days": "days",
+    "details": "Details",
+    "search_placeholder": "Search countries...",
+    "no_results": "No countries found"
+  },
+  "status": {
+    "visa_free": "Visa-Free",
+    "visa_on_arrival": "Visa on Arrival",
+    "e_visa": "E-Visa",
+    "visa_required": "Visa Required"
+  },
+  "continents": {
+    "all": "All",
+    "EU": "Europe",
+    "AS": "Asia",
+    "AF": "Africa",
+    "NA": "North America",
+    "SA": "South America",
+    "OC": "Oceania"
+  },
+  "selector": {
+    "title": "How powerful is your passport?",
+    "subtitle": "Select your country to see visa requirements for all destinations",
+    "choose_country": "Select your passport country",
+    "choose_language": "Choose your language",
+    "search_placeholder": "Search country...",
+    "cta": "Show Visa Requirements",
+    "popular": "Most searched"
+  },
+  "affiliate": {
+    "insurance_label": "Most Popular",
+    "insurance_title": "Travel Insurance",
+    "insurance_desc": "Stay protected abroad. Health, baggage and cancellation coverage.",
+    "insurance_cta": "Get Insured",
+    "esim_label": "Instant Activation",
+    "esim_title": "International eSIM",
+    "esim_desc": "Internet abroad without a physical SIM card.",
+    "esim_cta": "Get eSIM",
+    "hotel_label": "Free Cancellation",
+    "hotel_title": "Best Hotel Prices",
+    "hotel_desc": "Compare hotel prices worldwide.",
+    "hotel_cta": "Find Hotels"
+  },
+  "seo": {
+    "home_title": "{country} Passport Visa-Free Countries {year} | PassportData",
+    "home_description": "Complete list of countries {country} passport holders can visit visa-free in {year}. Includes visa on arrival, e-visa and all visa requirements.",
+    "visa_free_title": "{country} Passport Visa-Free Countries {year}",
+    "voa_title": "{country} Passport Visa on Arrival Countries {year}",
+    "evisa_title": "{country} Passport E-Visa Countries {year}",
+    "visa_required_title": "Countries Requiring Visa for {country} Passport {year}",
+    "ranking_title": "Global Passport Power Ranking {year} | Henley Index",
+    "ranking_description": "Complete passport power ranking for {year}. Compare passport strength by visa-free access worldwide.",
+    "compare_title": "Compare Passports Side by Side {year} | PassportData",
+    "compare_description": "Compare two passports side by side. See visa-free access differences between any two countries.",
+    "schengen_title": "Schengen 90/180 Day Calculator | PassportData",
+    "schengen_description": "Calculate your remaining days in the Schengen Area. Track the 90/180 day rule for visa-free stays.",
+    "bilateral_title": "{origin} to {destination} Visa Requirements {year}",
+    "bilateral_description": "Can {origin} passport holders travel to {destination} without a visa? Full visa requirements, stay duration and application guide for {year}.",
+    "lang_home_title": "Passport Visa Requirements Worldwide {year} | PassportData",
+    "lang_home_description": "Check visa requirements for any passport worldwide. Visa-free countries, visa on arrival, e-visa information for {year}."
+  },
+  "footer": {
+    "description": "Accurate visa and passport information for travelers worldwide.",
+    "last_updated": "Last updated",
+    "source": "Source: Henley Passport Index, Passport Index",
+    "quick_links": "Quick Links",
+    "tools": "Tools",
+    "info": "Information",
+    "about": "About",
+    "contact": "Contact",
+    "disclaimer": "Information is provided for reference only. Always verify with official embassy sources before traveling.",
+    "copyright": "© {year} PassportData. All rights reserved."
+  },
+  "tools": {
+    "schengen_title": "Schengen Stay Calculator",
+    "schengen_subtitle": "Calculate your remaining days in the Schengen Area under the 90/180 day rule",
+    "compare_title": "Compare Passports",
+    "compare_subtitle": "Select two passports to compare their visa-free access side by side"
+  },
+  "ranking": {
+    "title": "Global Passport Power Ranking {year}",
+    "subtitle": "Henley Passport Index - Countries ranked by visa-free access",
+    "rank": "Rank",
+    "country": "Country",
+    "visa_free_access": "Visa-Free Access",
+    "destinations": "destinations"
+  },
+  "bilateral": {
+    "from": "From",
+    "to": "To",
+    "visa_status": "Visa Status",
+    "max_stay": "Maximum Stay",
+    "notes": "Notes",
+    "back_to_dashboard": "Back to {country} dashboard",
+    "apply_now": "Apply for Visa",
+    "other_destinations": "Other destinations from {country}"
+  },
+  "category_pages": {
+    "visa_free_heading": "Countries {country} passport holders can visit without a visa",
+    "voa_heading": "Countries offering visa on arrival for {country} passport holders",
+    "evisa_heading": "Countries offering e-Visa for {country} passport holders",
+    "visa_required_heading": "Countries requiring a visa for {country} passport holders",
+    "count_label": "{count} countries",
+    "apply_visa": "Need a visa? Apply online"
+  }
+}

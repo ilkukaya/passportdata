@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "visa_free": "Vizesiz Ülkeler",
+    "visa_on_arrival": "Kapıda Vize",
+    "e_visa": "E-Vize",
+    "visa_required": "Vize Gerekli",
+    "ranking": "Pasaport Sıralaması",
+    "compare": "Pasaport Karşılaştır",
+    "tools": "Araçlar",
+    "schengen": "Schengen Hesaplayıcı"
+  },
+  "hero": {
+    "title": "{country} pasaportunuz sizi ne kadar uzağa götürebilir?",
+    "subtitle": "{year} yılında {country} pasaport sahipleri için vize gereksinimleri",
+    "henley_rank": "Henley Pasaport Endeksi Sıralaması",
+    "accessible": "Erişilebilir destinasyonlar"
+  },
+  "stats": {
+    "visa_free": "Vizesiz",
+    "visa_on_arrival": "Kapıda Vize",
+    "e_visa": "E-Vize",
+    "visa_required": "Vize Gerekli"
+  },
+  "table": {
+    "flag": "Bayrak",
+    "country": "Ülke",
+    "continent": "Kıta",
+    "visa_status": "Vize Durumu",
+    "stay_duration": "Maks. Kalış",
+    "days": "gün",
+    "details": "Detaylar",
+    "search_placeholder": "Ülke ara...",
+    "no_results": "Ülke bulunamadı"
+  },
+  "status": {
+    "visa_free": "Vizesiz",
+    "visa_on_arrival": "Kapıda Vize",
+    "e_visa": "E-Vize",
+    "visa_required": "Vize Gerekli"
+  },
+  "continents": {
+    "all": "Tümü",
+    "EU": "Avrupa",
+    "AS": "Asya",
+    "AF": "Afrika",
+    "NA": "Kuzey Amerika",
+    "SA": "Güney Amerika",
+    "OC": "Okyanusya"
+  },
+  "selector": {
+    "title": "Pasaportunuz ne kadar güçlü?",
+    "subtitle": "Tüm destinasyonlar için vize gereksinimlerini görmek üzere ülkenizi seçin",
+    "choose_country": "Pasaport ülkenizi seçin",
+    "choose_language": "Dilinizi seçin",
+    "search_placeholder": "Ülke ara...",
+    "cta": "Vize Gereksinimlerini Göster",
+    "popular": "En çok aranan"
+  },
+  "affiliate": {
+    "insurance_label": "En Popüler",
+    "insurance_title": "Seyahat Sigortası",
+    "insurance_desc": "Yurt dışında korunun. Sağlık, bagaj ve iptal güvencesi.",
+    "insurance_cta": "Sigorta Yaptır",
+    "esim_label": "Anında Aktivasyon",
+    "esim_title": "Uluslararası eSIM",
+    "esim_desc": "Fiziksel SIM kart olmadan yurt dışında internet.",
+    "esim_cta": "eSIM Al",
+    "hotel_label": "Ücretsiz İptal",
+    "hotel_title": "En İyi Otel Fiyatları",
+    "hotel_desc": "Dünya genelinde otel fiyatlarını karşılaştırın.",
+    "hotel_cta": "Otel Bul"
+  },
+  "seo": {
+    "home_title": "{country} Pasaportu Vizesiz Ülkeler {year} | PassportData",
+    "home_description": "{country} pasaport sahiplerinin {year} yılında vizesiz ziyaret edebileceği ülkelerin tam listesi. Kapıda vize, e-vize ve tüm vize gereksinimlerini içerir.",
+    "visa_free_title": "{country} Pasaportu Vizesiz Ülkeler {year}",
+    "voa_title": "{country} Pasaportu Kapıda Vize Ülkeleri {year}",
+    "evisa_title": "{country} Pasaportu E-Vize Ülkeleri {year}",
+    "visa_required_title": "{country} Pasaportu İçin Vize Gerektiren Ülkeler {year}",
+    "ranking_title": "Küresel Pasaport Güç Sıralaması {year} | Henley Endeksi",
+    "ranking_description": "{year} yılı için eksiksiz pasaport güç sıralaması. Dünya genelinde vizesiz erişime göre pasaport gücünü karşılaştırın.",
+    "compare_title": "Pasaportları Yan Yana Karşılaştır {year} | PassportData",
+    "compare_description": "İki pasaportu yan yana karşılaştırın. Herhangi iki ülke arasındaki vizesiz erişim farklılıklarını görün.",
+    "schengen_title": "Schengen 90/180 Gün Hesaplayıcı | PassportData",
+    "schengen_description": "Schengen Bölgesi'nde kalan günlerinizi hesaplayın. Vizesiz kalışlar için 90/180 gün kuralını takip edin.",
+    "bilateral_title": "{origin}'den {destination}'a Vize Gereksinimleri {year}",
+    "bilateral_description": "{origin} pasaport sahipleri {destination}'a vizesiz seyahat edebilir mi? {year} için tam vize gereksinimleri, kalış süresi ve başvuru kılavuzu.",
+    "lang_home_title": "Dünya Genelinde Pasaport Vize Gereksinimleri {year} | PassportData",
+    "lang_home_description": "Dünyanın her yerinden herhangi bir pasaport için vize gereksinimlerini kontrol edin. {year} için vizesiz ülkeler, kapıda vize, e-vize bilgileri."
+  },
+  "footer": {
+    "description": "Dünya genelindeki gezginler için doğru vize ve pasaport bilgileri.",
+    "last_updated": "Son güncelleme",
+    "source": "Kaynak: Henley Pasaport Endeksi, Passport Index",
+    "quick_links": "Hızlı Bağlantılar",
+    "tools": "Araçlar",
+    "info": "Bilgi",
+    "about": "Hakkında",
+    "contact": "İletişim",
+    "disclaimer": "Bilgiler yalnızca referans amaçlıdır. Seyahat etmeden önce her zaman resmi büyükelçilik kaynaklarıyla doğrulayın.",
+    "copyright": "© {year} PassportData. Tüm hakları saklıdır."
+  },
+  "tools": {
+    "schengen_title": "Schengen Kalış Hesaplayıcı",
+    "schengen_subtitle": "90/180 gün kuralı kapsamında Schengen Bölgesi'nde kalan günlerinizi hesaplayın",
+    "compare_title": "Pasaportları Karşılaştır",
+    "compare_subtitle": "Vizesiz erişimlerini yan yana karşılaştırmak için iki pasaport seçin"
+  },
+  "ranking": {
+    "title": "Küresel Pasaport Güç Sıralaması {year}",
+    "subtitle": "Henley Pasaport Endeksi - Vizesiz erişime göre sıralanan ülkeler",
+    "rank": "Sıra",
+    "country": "Ülke",
+    "visa_free_access": "Vizesiz Erişim",
+    "destinations": "destinasyon"
+  },
+  "bilateral": {
+    "from": "Nereden",
+    "to": "Nereye",
+    "visa_status": "Vize Durumu",
+    "max_stay": "Maksimum Kalış",
+    "notes": "Notlar",
+    "back_to_dashboard": "{country} kontrol paneline dön",
+    "apply_now": "Vize Başvurusu Yap",
+    "other_destinations": "{country}'den diğer destinasyonlar"
+  },
+  "category_pages": {
+    "visa_free_heading": "{country} pasaport sahiplerinin vizesiz ziyaret edebileceği ülkeler",
+    "voa_heading": "{country} pasaport sahiplerine kapıda vize sunan ülkeler",
+    "evisa_heading": "{country} pasaport sahiplerine e-Vize sunan ülkeler",
+    "visa_required_heading": "{country} pasaport sahiplerinden vize isteyen ülkeler",
+    "count_label": "{count} ülke",
+    "apply_visa": "Vizeye mi ihtiyacınız var? Çevrimiçi başvurun"
+  }
+}
