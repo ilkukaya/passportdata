@@ -2,11 +2,6 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/"
-  to = "/en/"
-  status = 302
-
-[[redirects]]
   from = "/tr"
   to = "/tr/"
   status = 301
