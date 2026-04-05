@@ -10,7 +10,7 @@ export default defineConfig({
     }
   },
   output: 'static',
-  site: 'https://passportdata.io',
+  site: 'https://passportdata.netlify.app',
   build: {
     format: 'directory'
   }

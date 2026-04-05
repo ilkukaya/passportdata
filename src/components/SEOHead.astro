@@ -20,10 +20,10 @@ const ADSENSE_ID = 'ca-pub-ADSENSE_PUB_ID';
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
   {alternateLinks && Object.entries(alternateLinks).map(([hLang, href]) => (
-    <link rel="alternate" hreflang={hLang} href={`https://passportdata.io${href}`} />
+    <link rel="alternate" hreflang={hLang} href={`https://passportdata.netlify.app${href}`} />
   ))}
   {alternateLinks?.en && (
-    <link rel="alternate" hreflang="x-default" href={`https://passportdata.io${alternateLinks.en}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://passportdata.netlify.app${alternateLinks.en}`} />
   )}
 
   <meta property="og:title" content={title} />
@@ -31,7 +31,7 @@ const ADSENSE_ID = 'ca-pub-ADSENSE_PUB_ID';
   <meta property="og:type" content="website" />
   <meta property="og:locale" content={lang} />
   <meta property="og:site_name" content="PassportData" />
-  <meta property="og:image" content={`https://passportdata.io/og-image-${lang}.png`} />
+  <meta property="og:image" content={`https://passportdata.netlify.app/og-image-${lang}.png`} />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
@@ -41,11 +41,11 @@ const ADSENSE_ID = 'ca-pub-ADSENSE_PUB_ID';
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "PassportData",
-    "url": "https://passportdata.io",
+    "url": "https://passportdata.netlify.app",
     "description": description,
     "inLanguage": lang
   })} />
 
   <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`} crossorigin="anonymous"></script>
-  <script defer data-domain="passportdata.io" src="https://plausible.io/js/script.js"></script>
+  <script defer data-domain="passportdata.netlify.app" src="https://plausible.io/js/script.js"></script>
 </head>
