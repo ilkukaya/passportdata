@@ -48,7 +48,7 @@ const matrixData = (visaMatrix as any).data;
     <div class="max-w-4xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Passport 1</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{t('compare.passport_1')}</label>
           <select id="passport-1" class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-indigo-300 focus:outline-none">
             <option value="">{t('selector.choose_country')}</option>
             {countryList.map(c => (
@@ -57,7 +57,7 @@ const matrixData = (visaMatrix as any).data;
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Passport 2</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{t('compare.passport_2')}</label>
           <select id="passport-2" class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-indigo-300 focus:outline-none">
             <option value="">{t('selector.choose_country')}</option>
             {countryList.map(c => (
@@ -74,8 +74,8 @@ const matrixData = (visaMatrix as any).data;
             <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
               <tr>
                 <th class="px-4 py-3 text-start">{t('table.country')}</th>
-                <th class="px-4 py-3 text-center" id="th-p1">Passport 1</th>
-                <th class="px-4 py-3 text-center" id="th-p2">Passport 2</th>
+                <th class="px-4 py-3 text-center" id="th-p1">{t('compare.passport_1')}</th>
+                <th class="px-4 py-3 text-center" id="th-p2">{t('compare.passport_2')}</th>
               </tr>
             </thead>
             <tbody id="compare-body"></tbody>
@@ -86,7 +86,7 @@ const matrixData = (visaMatrix as any).data;
   </section>
 </BaseLayout>
 
-<script define:vars={{ matrixData, countries, lang }}>
+<script define:vars={{ matrixData, countries, lang, statusTranslations: { visa_free: t('status.visa_free'), visa_on_arrival: t('status.visa_on_arrival'), e_visa: t('status.e_visa'), visa_required: t('status.visa_required') } }}>
   const statusOrder = { visa_free: 0, visa_on_arrival: 1, e_visa: 2, visa_required: 3 };
   const statusColors = {
     visa_free: 'bg-green-100 text-green-800',
@@ -94,12 +94,7 @@ const matrixData = (visaMatrix as any).data;
     e_visa: 'bg-blue-100 text-blue-800',
     visa_required: 'bg-red-100 text-red-800',
   };
-  const statusLabels = {
-    visa_free: 'Visa-Free',
-    visa_on_arrival: 'Visa on Arrival',
-    e_visa: 'E-Visa',
-    visa_required: 'Visa Required',
-  };
+  const statusLabels = statusTranslations;
 
   function getStats(data) {
     const vals = Object.values(data || {});
@@ -131,19 +126,19 @@ const matrixData = (visaMatrix as any).data;
       <div class="bg-white rounded-xl shadow-sm border p-4">
         <h3 class="font-bold text-gray-900 mb-3">${n1}</h3>
         <div class="space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-green-700">Visa-Free</span><span class="font-bold">${s1.visa_free}</span></div>
-          <div class="flex justify-between"><span class="text-yellow-700">Visa on Arrival</span><span class="font-bold">${s1.visa_on_arrival}</span></div>
-          <div class="flex justify-between"><span class="text-blue-700">E-Visa</span><span class="font-bold">${s1.e_visa}</span></div>
-          <div class="flex justify-between"><span class="text-red-700">Visa Required</span><span class="font-bold">${s1.visa_required}</span></div>
+          <div class="flex justify-between"><span class="text-green-700">${statusLabels.visa_free}</span><span class="font-bold">${s1.visa_free}</span></div>
+          <div class="flex justify-between"><span class="text-yellow-700">${statusLabels.visa_on_arrival}</span><span class="font-bold">${s1.visa_on_arrival}</span></div>
+          <div class="flex justify-between"><span class="text-blue-700">${statusLabels.e_visa}</span><span class="font-bold">${s1.e_visa}</span></div>
+          <div class="flex justify-between"><span class="text-red-700">${statusLabels.visa_required}</span><span class="font-bold">${s1.visa_required}</span></div>
         </div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border p-4">
         <h3 class="font-bold text-gray-900 mb-3">${n2}</h3>
         <div class="space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-green-700">Visa-Free</span><span class="font-bold">${s2.visa_free}</span></div>
-          <div class="flex justify-between"><span class="text-yellow-700">Visa on Arrival</span><span class="font-bold">${s2.visa_on_arrival}</span></div>
-          <div class="flex justify-between"><span class="text-blue-700">E-Visa</span><span class="font-bold">${s2.e_visa}</span></div>
-          <div class="flex justify-between"><span class="text-red-700">Visa Required</span><span class="font-bold">${s2.visa_required}</span></div>
+          <div class="flex justify-between"><span class="text-green-700">${statusLabels.visa_free}</span><span class="font-bold">${s2.visa_free}</span></div>
+          <div class="flex justify-between"><span class="text-yellow-700">${statusLabels.visa_on_arrival}</span><span class="font-bold">${s2.visa_on_arrival}</span></div>
+          <div class="flex justify-between"><span class="text-blue-700">${statusLabels.e_visa}</span><span class="font-bold">${s2.e_visa}</span></div>
+          <div class="flex justify-between"><span class="text-red-700">${statusLabels.visa_required}</span><span class="font-bold">${s2.visa_required}</span></div>
         </div>
       </div>`;
     document.getElementById('compare-stats').innerHTML = statsHtml;

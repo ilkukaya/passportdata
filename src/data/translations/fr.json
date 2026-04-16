@@ -107,6 +107,23 @@
     "compare_title": "Comparer les Passeports",
     "compare_subtitle": "Sélectionnez deux passeports pour comparer leur accès sans visa côte à côte"
   },
+  "schengen": {
+    "visits_title": "Vos visites dans l'espace Schengen (180 derniers jours)",
+    "entry_date": "Date d'entrée",
+    "exit_date": "Date de sortie",
+    "add_visit": "+ Ajouter une autre visite",
+    "calculate": "Calculer",
+    "days_used_label": "Jours utilisés dans la fenêtre actuelle de 180 jours",
+    "days_remaining_label": "Jours restants",
+    "about_title": "À propos de la règle des 90/180 jours",
+    "about_text": "Les ressortissants non-UE peuvent séjourner dans l'espace Schengen pendant un maximum de 90 jours sur toute période de 180 jours. C'est une fenêtre glissante — la période de 180 jours est comptée à rebours à partir de chaque jour de présence dans l'espace Schengen.",
+    "reentry_text": "Vous pouvez ré-entrer à partir du : {date}",
+    "remaining_text": "Vous pouvez rester {days} jours de plus dans la fenêtre actuelle."
+  },
+  "compare": {
+    "passport_1": "Passeport 1",
+    "passport_2": "Passeport 2"
+  },
   "ranking": {
     "title": "Classement Mondial de la Puissance des Passeports {year}",
     "subtitle": "Indice Henley des Passeports - Pays classés par accès sans visa",
@@ -131,6 +148,7 @@
     "evisa_heading": "Pays offrant un e-Visa aux titulaires d'un passeport {country}",
     "visa_required_heading": "Pays exigeant un visa pour les titulaires d'un passeport {country}",
     "count_label": "{count} pays",
-    "apply_visa": "Besoin d'un visa ? Faites votre demande en ligne"
+    "apply_visa": "Besoin d'un visa ? Faites votre demande en ligne",
+    "ivisa_desc": "Service de demande de visa en ligne rapide et sécurisé"
   }
 }

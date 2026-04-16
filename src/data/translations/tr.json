@@ -107,6 +107,23 @@
     "compare_title": "Pasaportları Karşılaştır",
     "compare_subtitle": "Vizesiz erişimlerini yan yana karşılaştırmak için iki pasaport seçin"
   },
+  "schengen": {
+    "visits_title": "Schengen ziyaretleriniz (son 180 gün)",
+    "entry_date": "Giriş tarihi",
+    "exit_date": "Çıkış tarihi",
+    "add_visit": "+ Başka ziyaret ekle",
+    "calculate": "Hesapla",
+    "days_used_label": "Mevcut 180 günlük pencerede kullanılan günler",
+    "days_remaining_label": "Kalan günler",
+    "about_title": "90/180 gün kuralı hakkında",
+    "about_text": "AB vatandaşı olmayanlar, herhangi bir 180 günlük süre içinde Schengen Bölgesi'nde en fazla 90 gün kalabilir. Bu kayan bir penceredir — 180 günlük süre, Schengen bölgesinde bulunulan her günden geriye doğru sayılır.",
+    "reentry_text": "Tekrar giriş yapabileceğiniz tarih: {date}",
+    "remaining_text": "Mevcut pencerede {days} gün daha kalabilirsiniz."
+  },
+  "compare": {
+    "passport_1": "Pasaport 1",
+    "passport_2": "Pasaport 2"
+  },
   "ranking": {
     "title": "Küresel Pasaport Güç Sıralaması {year}",
     "subtitle": "Henley Pasaport Endeksi - Vizesiz erişime göre sıralanan ülkeler",
@@ -131,6 +148,7 @@
     "evisa_heading": "{country} pasaport sahiplerine e-Vize sunan ülkeler",
     "visa_required_heading": "{country} pasaport sahiplerinden vize isteyen ülkeler",
     "count_label": "{count} ülke",
-    "apply_visa": "Vizeye mi ihtiyacınız var? Çevrimiçi başvurun"
+    "apply_visa": "Vizeye mi ihtiyacınız var? Çevrimiçi başvurun",
+    "ivisa_desc": "Hızlı ve güvenli çevrimiçi vize başvuru hizmeti"
   }
 }

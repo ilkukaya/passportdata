@@ -107,6 +107,23 @@
     "compare_title": "Comparar Passaportes",
     "compare_subtitle": "Selecione dois passaportes para comparar o acesso sem visto lado a lado"
   },
+  "schengen": {
+    "visits_title": "Suas visitas a Schengen (últimos 180 dias)",
+    "entry_date": "Data de entrada",
+    "exit_date": "Data de saída",
+    "add_visit": "+ Adicionar outra visita",
+    "calculate": "Calcular",
+    "days_used_label": "Dias usados na janela atual de 180 dias",
+    "days_remaining_label": "Dias restantes",
+    "about_title": "Sobre a regra de 90/180 dias",
+    "about_text": "Cidadãos não pertencentes à UE podem permanecer na Área Schengen por no máximo 90 dias em qualquer período de 180 dias. É uma janela móvel — o período de 180 dias é contado retroativamente a partir de cada dia de presença na área Schengen.",
+    "reentry_text": "Você pode reentrar a partir de: {date}",
+    "remaining_text": "Você pode ficar mais {days} dias na janela atual."
+  },
+  "compare": {
+    "passport_1": "Passaporte 1",
+    "passport_2": "Passaporte 2"
+  },
   "ranking": {
     "title": "Ranking Mundial de Poder dos Passaportes {year}",
     "subtitle": "Índice Henley de Passaportes - Países classificados por acesso sem visto",
@@ -131,6 +148,7 @@
     "evisa_heading": "Países que oferecem e-Visto para portadores do passaporte do {country}",
     "visa_required_heading": "Países que exigem visto para portadores do passaporte do {country}",
     "count_label": "{count} países",
-    "apply_visa": "Precisa de visto? Solicite online"
+    "apply_visa": "Precisa de visto? Solicite online",
+    "ivisa_desc": "Serviço de solicitação de visto online rápido e seguro"
   }
 }

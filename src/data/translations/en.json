@@ -107,6 +107,23 @@
     "compare_title": "Compare Passports",
     "compare_subtitle": "Select two passports to compare their visa-free access side by side"
   },
+  "schengen": {
+    "visits_title": "Your Schengen visits (last 180 days)",
+    "entry_date": "Entry date",
+    "exit_date": "Exit date",
+    "add_visit": "+ Add another visit",
+    "calculate": "Calculate",
+    "days_used_label": "Days used in current 180-day window",
+    "days_remaining_label": "Days remaining",
+    "about_title": "About the 90/180 day rule",
+    "about_text": "Non-EU nationals can stay in the Schengen Area for a maximum of 90 days within any 180-day period. This is a rolling window — the 180-day period is counted backwards from each day of presence in the Schengen area.",
+    "reentry_text": "You can re-enter from: {date}",
+    "remaining_text": "You can stay {days} more days in the current window."
+  },
+  "compare": {
+    "passport_1": "Passport 1",
+    "passport_2": "Passport 2"
+  },
   "ranking": {
     "title": "Global Passport Power Ranking {year}",
     "subtitle": "Henley Passport Index - Countries ranked by visa-free access",
@@ -131,6 +148,7 @@
     "evisa_heading": "Countries offering e-Visa for {country} passport holders",
     "visa_required_heading": "Countries requiring a visa for {country} passport holders",
     "count_label": "{count} countries",
-    "apply_visa": "Need a visa? Apply online"
+    "apply_visa": "Need a visa? Apply online",
+    "ivisa_desc": "Fast, secure online visa application service"
   }
 }
