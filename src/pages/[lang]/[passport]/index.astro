@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import Flag from '../../../components/Flag.astro';
+import StatusBar from '../../../components/StatusBar.astro';
+import TripChecker from '../../../components/TripChecker.astro';
+import CountryGroups from '../../../components/CountryGroups.astro';
+import Faq from '../../../components/Faq.astro';
+import Icon from '../../../components/Icon.astro';
+import AdSlot from '../../../components/AdSlot.astro';
+import Affiliates from '../../../components/Affiliates.astro';
+import { LANG_CODES, getUI, fmt, num, formatDate, list } from '../../../i18n';
+import { POPULAR_DESTINATIONS, SCHENGEN, SITE_URL } from '../../../config/site';
+import {
+  CODES, DATA_UPDATED, OPEN_STATUSES, countryName, passportPath, homePath, pairPath, visitPath, toolPath, alternatesFor,
+  outboundCounts, outboundGroups, rankOf, requirement,
+} from '../../../lib/data';
+import { webPage, breadcrumbList, faqPage, type QA } from '../../../lib/schema';
+
+export function getStaticPaths() {
+  return LANG_CODES.flatMap((lang) => CODES.map((code) => ({ params: { lang, passport: passportPath(lang, code).split('/')[2] }, props: { code } })));
+}
+
+const { lang } = Astro.params as { lang: string };
+const { code } = Astro.props;
+const ui = getUI(lang);
+const p = ui.passport;
+const year = new Date().getUTCFullYear();
+const country = countryName(code, lang);
+const counts = outboundCounts(code);
+const rank = rankOf(code);
+const date = formatDate(lang, DATA_UPDATED);
+const vars = {
+  country, year, date, rank: rank.rank,
+  mobility: num(lang, counts.open), vf: num(lang, counts.visa_free), voa: num(lang, counts.visa_on_arrival),
+  eta: num(lang, counts.eta), ev: num(lang, counts.e_visa), vr: num(lang, counts.visa_required),
+};
+const path = passportPath(lang, code);
+const url = `${SITE_URL}${path}`;
+const title = fmt(p.title, vars);
+const description = fmt(p.description, vars);
+
+const popularOpen = POPULAR_DESTINATIONS.filter((d) => d !== code && OPEN_STATUSES.includes(requirement(code, d)?.status as any)).slice(0, 8);
+const faq: QA[] = [
+  { q: fmt(p.faq.q1, vars), a: fmt(p.faq.a1, vars) },
+  { q: fmt(p.faq.q2, vars), a: fmt(p.faq.a2, vars) },
+];
+if (!SCHENGEN.includes(code) && !['IE', 'CY'].includes(code)) {
+  const schengen = requirement(code, 'DE')?.status;
+  faq.push({ q: fmt(p.faq.q3, vars), a: fmt(schengen && OPEN_STATUSES.includes(schengen) ? p.faq.a3no : p.faq.a3yes, vars) });
+}
+if (popularOpen.length) {
+  faq.push({ q: fmt(p.faq.q4, vars), a: fmt(p.faq.a4, { ...vars, list: list(lang, popularOpen.map((d) => countryName(d, lang))) }) });
+}
+faq.push({ q: fmt(p.faq.q5, vars), a: fmt(p.faq.a5, vars) });
+
+const crumbs = [{ name: ui.nav.home, path: homePath(lang) }, { name: country }];
+const pad = (n: number) => String(n).padStart(3, '0');
+const mrz = `P<${code}<<VISA<FREE<${pad(counts.visa_free)}<<VOA<${pad(counts.visa_on_arrival)}<<ETA<${pad(counts.eta)}<<EVISA<${pad(counts.e_visa)}<<RANK<${pad(rank.rank)}<<<<<<<<<<<<<<<<`;
+const jsonLd = [
+  webPage({ url, name: title, description, lang, crumbs, about: { '@type': 'Country', name: countryName(code, 'en') } }),
+  breadcrumbList(url, crumbs),
+  faqPage(url, faq),
+];
+---
+
+<BaseLayout {lang} {title} {description} {path} alternates={alternatesFor((l) => passportPath(l, code))} {jsonLd}>
+  <Breadcrumbs items={crumbs} />
+
+  <section class="wrap mt-5">
+    <div class="relative overflow-hidden rounded-xl border border-line bg-surface">
+      <div class="grid gap-6 p-5 pe-28 sm:p-8 sm:pe-36 md:grid-cols-[auto_1fr]">
+        <Flag code={code} size="xl" eager class="!w-[72px] !h-[48px] sm:!w-[84px] sm:!h-[56px]" />
+        <div class="min-w-0">
+          <p class="eyebrow">{ui.common.passport} · {countryName(code, 'en') === country ? code : `${code} · ${countryName(code, 'en')}`}</p>
+          <h1 class="mt-2 text-3xl leading-tight md:text-[2.6rem]">{fmt(p.h1, vars)}</h1>
+          <p class="mt-2 text-sm text-muted">{fmt(ui.common.updated, { date })}</p>
+        </div>
+      </div>
+      <a href={`${toolPath(lang, 'passport-ranking')}#${code.toLowerCase()}`} class="stamp absolute end-5 top-5 h-20 w-20 text-center text-[0.6rem] font-bold uppercase leading-tight sm:end-8 sm:top-8 sm:h-24 sm:w-24" title={fmt(p.rankLine, vars)}>
+        <span>{ui.common.rank}<br /><span class="num text-2xl sm:text-3xl">#{rank.rank}</span></span>
+      </a>
+      <div class="border-t border-line px-5 py-6 sm:px-8">
+        <div class="flex flex-wrap items-end gap-x-6 gap-y-1 mb-4">
+          <p class="num text-5xl font-semibold leading-none">{vars.mobility}<span class="text-xl text-faint">/198</span></p>
+          <p class="text-sm text-muted max-w-sm">{p.mobilityScore}: {p.mobilityHint}</p>
+        </div>
+        <StatusBar {lang} {counts} />
+      </div>
+      <div class="border-t border-line px-5 py-6 sm:px-8">
+        <p class="max-w-3xl text-lg leading-relaxed" data-answer>{fmt(p.summary, vars)}</p>
+        <p class="mt-3 text-muted">{fmt(p.rankLine, vars)}</p>
+      </div>
+      <p class="mrz border-t border-line bg-sunken/60 px-5 py-3 sm:px-8" aria-hidden="true">{mrz}</p>
+    </div>
+  </section>
+
+  <section class="wrap mt-8">
+    <div class="rounded-xl border border-line bg-surface p-5 sm:p-6">
+      <TripChecker {lang} from={code} compact />
+    </div>
+  </section>
+
+  <AdSlot slot="top" />
+
+  <section class="wrap mt-10" aria-label={fmt(p.tableTitle, vars)}>
+    <CountryGroups
+      {lang}
+      groups={outboundGroups(code)}
+      heading={(s) => fmt(p.lists[s], vars)}
+      href={(d) => pairPath(lang, code, d)}
+      days={(d) => requirement(code, d)?.days ?? null}
+    />
+  </section>
+
+  <AdSlot slot="inContent" />
+
+  <Faq title={ui.common.faq} items={faq} />
+
+  <Affiliates {lang} visa={counts.e_visa + counts.eta > 0} />
+
+  <section class="wrap mt-14 flex flex-col gap-4 border-t border-line pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <p class="flex max-w-3xl gap-2 text-muted"><Icon name="info" size={18} class="mt-0.5" />{ui.common.officialCheck}</p>
+    <a class="link font-semibold whitespace-nowrap" href={visitPath(lang, code)}>{fmt(ui.visit.link, { destination: country })}</a>
+  </section>
+
+  <AdSlot slot="bottom" />
+</BaseLayout>

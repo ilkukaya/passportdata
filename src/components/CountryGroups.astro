@@ -1,0 +1,87 @@
+---
+import Flag from './Flag.astro';
+import Icon from './Icon.astro';
+import { getUI, fmt, num } from '../i18n';
+import { STATUSES, countryName, sortByName, type Status } from '../lib/data';
+interface Props {
+  lang: string;
+  groups: Record<Status, string[]>;
+  heading: (s: Status) => string;
+  href: (code: string) => string;
+  days: (code: string) => number | null;
+}
+const { lang, groups, heading, href, days } = Astro.props;
+const ui = getUI(lang);
+const shown = STATUSES.filter((s) => groups[s].length > 0);
+---
+<div class="country-groups">
+  <div class="sticky top-14 z-30 -mx-4 sm:-mx-6 border-b border-line bg-paper/95 px-4 sm:px-6 py-3 backdrop-blur">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center">
+      <label class="relative block md:w-72 shrink-0">
+        <span class="sr-only">{ui.common.filter}</span>
+        <Icon name="search" size={18} class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-faint" />
+        <input type="search" class="field group-filter !py-2 ps-10" placeholder={ui.common.filter} autocomplete="off" />
+      </label>
+      <nav class="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1" aria-label={ui.common.onThisPage}>
+        {shown.map((s) => (
+          <a href={`#${s}`} class="chip !py-1">
+            <span class={`dot-${s} h-2 w-2 rounded-full`}></span>{ui.status[s]}
+            <span class="num text-muted">{num(lang, groups[s].length)}</span>
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  {shown.map((s) => (
+    <section id={s} class="group-section mt-10 scroll-mt-40">
+      <div class="mb-4 flex items-start gap-3">
+        <span class={`dot-${s} mt-2.5 h-2.5 w-2.5 shrink-0 rounded-full`}></span>
+        <div>
+          <h2 class="text-xl md:text-2xl leading-snug">{heading(s)} <span class="num font-sans text-base font-normal text-muted">({num(lang, groups[s].length)})</span></h2>
+          <p class="mt-1 max-w-3xl text-sm text-muted">{ui.statusDesc[s]}</p>
+        </div>
+      </div>
+      <ul class="clist">
+        {sortByName(groups[s], lang).map((code) => {
+          const d = days(code);
+          const name = countryName(code, lang);
+          const en = countryName(code, 'en');
+          return (
+            <li data-n={(en === name ? name : `${name} ${en}`).toLowerCase()}>
+              <a href={href(code)} class="crow">
+                <Flag code={code} />
+                <span class="cname">{name}</span>
+                {d && <span class="cmeta">{fmt(ui.common.days, { n: num(lang, d) })}</span>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))}
+  <p class="no-results hidden py-10 text-center text-muted">{ui.common.noResults}</p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.country-groups').forEach((root) => {
+    const input = root.querySelector<HTMLInputElement>('.group-filter');
+    const empty = root.querySelector<HTMLElement>('.no-results');
+    const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+    input?.addEventListener('input', () => {
+      const q = norm(input.value.trim());
+      let total = 0;
+      root.querySelectorAll<HTMLElement>('.group-section').forEach((section) => {
+        let visible = 0;
+        section.querySelectorAll<HTMLElement>('li[data-n]').forEach((li) => {
+          const show = !q || norm(li.dataset.n!).includes(q);
+          li.hidden = !show;
+          if (show) visible++;
+        });
+        section.hidden = visible === 0;
+        total += visible;
+      });
+      empty?.classList.toggle('hidden', total > 0);
+    });
+  });
+</script>

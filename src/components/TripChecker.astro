@@ -1,0 +1,191 @@
+---
+/**
+ * Two-field "my passport → destination" checker. Shows the answer inline (fetched from the
+ * static JSON API) and links to the detailed page.
+ */
+import Icon from './Icon.astro';
+import { getUI } from '../i18n';
+import { CODES, countryName, countrySlug, hasRoutes } from '../lib/data';
+
+interface Props { lang: string; from?: string; compact?: boolean }
+const { lang, from, compact = false } = Astro.props;
+const ui = getUI(lang);
+const items = CODES.map((c) => ({ c, n: countryName(c, lang), a: countryName(c, 'en'), s: countrySlug(c, lang) }));
+const data = {
+  lang,
+  items,
+  routes: CODES.filter((c) => hasRoutes(lang, c)),
+  status: ui.status,
+  answer: ui.route.answer,
+  stay: ui.route.stay,
+  more: ui.common.details,
+  error: ui.compare.error,
+};
+const field = (role: 'from' | 'to') => ({
+  id: `tc-${role}-${lang}`,
+  label: role === 'from' ? ui.common.passport : ui.common.destination,
+  placeholder: ui.common.searchCountry,
+});
+---
+<form class="trip-checker" data-from={from ?? ''} novalidate>
+  <div class:list={['grid gap-2', compact ? 'md:grid-cols-[1fr_auto]' : 'md:grid-cols-[1fr_1fr_auto]']}>
+    {(from ? (['to'] as const) : (['from', 'to'] as const)).map((role) => {
+      const f = field(role);
+      return (
+        <div class="picker relative" data-role={role}>
+          <label for={f.id} class="eyebrow mb-1.5 block">{f.label}</label>
+          <div class="relative">
+            <img class="picked-flag flag pointer-events-none absolute start-3.5 top-1/2 hidden -translate-y-1/2" width="21" height="14" alt="" />
+            <Icon name={role === 'from' ? 'passport' : 'pin'} size={18} class="picker-icon pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-faint" />
+            <input id={f.id} type="text" role="combobox" aria-expanded="false" aria-autocomplete="list" autocomplete="off"
+                   spellcheck="false" placeholder={f.placeholder} class="field ps-11 text-base" />
+          </div>
+          <ul role="listbox" class="results menu inset-x-0 hidden max-h-72 overflow-y-auto"></ul>
+        </div>
+      );
+    })}
+    <div class="flex items-end">
+      <button type="submit" class="btn w-full md:w-auto h-[50px]">
+        <span>{ui.common.show}</span><Icon name="arrow" size={18} class="rtl:rotate-180" />
+      </button>
+    </div>
+  </div>
+  <div class="tc-result mt-4 hidden" aria-live="polite"></div>
+  <script type="application/json" class="tc-data" set:html={JSON.stringify(data)} />
+</form>
+
+<script>
+  type Item = { c: string; n: string; a: string; s: string };
+  const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+  const fill = (t: string, v: Record<string, string>) => t.replace(/\{(\w+)\}/g, (m, k) => v[k] ?? m);
+  const STORE = 'pd_passport';
+
+  document.querySelectorAll<HTMLFormElement>('.trip-checker').forEach((form) => {
+    const data = JSON.parse(form.querySelector('.tc-data')!.textContent!);
+    const items: Item[] = data.items;
+    const byCode = new Map(items.map((i) => [i.c, i]));
+    const index = items.map((it) => ({ it, key: norm(`${it.n} ${it.a} ${it.c}`) }));
+    const routes = new Set<string>(data.routes);
+    const picked: Record<string, string> = { from: form.dataset.from || '', to: '' };
+    const result = form.querySelector<HTMLElement>('.tc-result')!;
+
+    const setPicked = (picker: HTMLElement, code: string) => {
+      const role = picker.dataset.role!;
+      const it = byCode.get(code);
+      picked[role] = it ? code : '';
+      const input = picker.querySelector('input')!;
+      const flag = picker.querySelector<HTMLImageElement>('.picked-flag')!;
+      const icon = picker.querySelector<SVGElement>('.picker-icon')!;
+      if (it) {
+        input.value = it.n;
+        flag.src = `/flags/${code.toLowerCase()}.svg`;
+        flag.classList.remove('hidden');
+        icon.classList.add('hidden');
+        if (role === 'from') try { localStorage.setItem(STORE, code); } catch {}
+      } else {
+        flag.classList.add('hidden');
+        icon.classList.remove('hidden');
+      }
+    };
+
+    form.querySelectorAll<HTMLElement>('.picker').forEach((picker) => {
+      const input = picker.querySelector('input')!;
+      const list = picker.querySelector<HTMLUListElement>('.results')!;
+      let active = -1;
+      const close = () => { list.classList.add('hidden'); input.setAttribute('aria-expanded', 'false'); active = -1; };
+      const choose = (code: string) => {
+        setPicked(picker, code);
+        close();
+        const next = form.querySelector<HTMLInputElement>('.picker[data-role="to"] input');
+        if (picker.dataset.role === 'from' && next && !picked.to) next.focus();
+        else if (picked.to && (picked.from || form.dataset.from)) form.requestSubmit();
+      };
+      const render = () => {
+        const q = norm(input.value.trim());
+        picked[picker.dataset.role!] = '';
+        picker.querySelector('.picked-flag')!.classList.add('hidden');
+        picker.querySelector('.picker-icon')!.classList.remove('hidden');
+        if (!q) return close();
+        const hits = index.filter((x) => x.key.includes(q))
+          .sort((a, b) => Number(!norm(a.it.n).startsWith(q)) - Number(!norm(b.it.n).startsWith(q)) || a.it.n.length - b.it.n.length)
+          .slice(0, 8);
+        list.replaceChildren(...hits.map(({ it }, i) => {
+          const li = document.createElement('li');
+          li.setAttribute('role', 'option');
+          li.id = `${input.id}-o${i}`;
+          li.className = 'mlink flex cursor-pointer items-center gap-3';
+          const img = document.createElement('img');
+          img.src = `/flags/${it.c.toLowerCase()}.svg`; img.width = 21; img.height = 14; img.alt = ''; img.className = 'flag';
+          li.append(img, document.createTextNode(it.n));
+          li.addEventListener('mousedown', (e) => { e.preventDefault(); choose(it.c); });
+          return li;
+        }));
+        list.classList.toggle('hidden', hits.length === 0);
+        input.setAttribute('aria-expanded', String(hits.length > 0));
+      };
+      input.addEventListener('input', render);
+      input.addEventListener('focus', () => input.select());
+      input.addEventListener('blur', () => setTimeout(close, 100));
+      input.addEventListener('keydown', (e) => {
+        const opts = [...list.querySelectorAll<HTMLElement>('[role=option]')];
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (!opts.length) return;
+          active = (active + (e.key === 'ArrowDown' ? 1 : -1) + opts.length) % opts.length;
+          opts.forEach((o, i) => o.classList.toggle('bg-sunken', i === active));
+          input.setAttribute('aria-activedescendant', opts[active].id);
+        } else if (e.key === 'Enter' && opts.length && !list.classList.contains('hidden')) {
+          e.preventDefault();
+          opts[Math.max(active, 0)].dispatchEvent(new MouseEvent('mousedown'));
+        } else if (e.key === 'Escape') close();
+      });
+    });
+
+    // Pre-fill the passport the visitor used last time.
+    const fromPicker = form.querySelector<HTMLElement>('.picker[data-role="from"]');
+    if (fromPicker) {
+      let saved = '';
+      try { saved = localStorage.getItem(STORE) || ''; } catch {}
+      if (saved) setPicked(fromPicker, saved);
+    }
+
+    const cache = new Map<string, Record<string, [string, number?]>>();
+    const lang = data.lang;
+    const passportUrl = (c: string) => `/${lang}/${byCode.get(c)!.s}/`;
+    const visitUrl = (c: string) => `/${lang}/visit/${byCode.get(c)!.s}/`;
+    const pairUrl = (f: string, t: string) => (routes.has(f) ? `/${lang}/${byCode.get(f)!.s}/to/${byCode.get(t)!.s}/` : visitUrl(t));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = picked.from || form.dataset.from || '';
+      const t = picked.to;
+      if (f && !t) return (location.href = passportUrl(f));
+      if (!f && t) return (location.href = visitUrl(t));
+      if (!f || !t) return form.querySelector<HTMLInputElement>('input')?.focus();
+      if (f === t) return (location.href = passportUrl(f));
+      try {
+        if (!cache.has(f)) cache.set(f, (await (await fetch(`/api/v1/passports/${f}.json`)).json()).requirements);
+        const [status, days] = cache.get(f)![t];
+        const names = { origin: byCode.get(f)!.n, destination: byCode.get(t)!.n };
+        result.innerHTML = '';
+        const box = document.createElement('div');
+        box.className = 'panel flex flex-col gap-3 p-4 sm:flex-row sm:items-center';
+        const badge = document.createElement('span');
+        badge.className = `badge s-${status} self-start sm:self-center !text-sm`;
+        badge.textContent = data.status[status];
+        const text = document.createElement('p');
+        text.className = 'flex-1 text-ink';
+        text.textContent = fill(data.answer[status], names) + (days ? ` ${fill(data.stay, { n: String(days) })}` : '');
+        const link = document.createElement('a');
+        link.href = pairUrl(f, t);
+        link.className = 'link whitespace-nowrap text-sm font-semibold';
+        link.textContent = `${data.more} →`;
+        box.append(badge, text, link);
+        result.append(box);
+        result.classList.remove('hidden');
+      } catch {
+        location.href = pairUrl(f, t);
+      }
+    });
+  });
+</script>

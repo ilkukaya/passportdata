@@ -1,0 +1,7 @@
+---
+import { getUI } from '../i18n';
+import type { Status } from '../lib/data';
+interface Props { lang: string; status: Status; class?: string }
+const { lang, status, class: cls } = Astro.props;
+---
+<span class:list={['badge', `s-${status}`, cls]}>{getUI(lang).status[status]}</span>

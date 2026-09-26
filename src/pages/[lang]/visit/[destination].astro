@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import Flag from '../../../components/Flag.astro';
+import StatusBar from '../../../components/StatusBar.astro';
+import Icon from '../../../components/Icon.astro';
+import CountryGroups from '../../../components/CountryGroups.astro';
+import AdSlot from '../../../components/AdSlot.astro';
+import Affiliates from '../../../components/Affiliates.astro';
+import { LANG_CODES, getUI, fmt, num, formatDate } from '../../../i18n';
+import { SITE_URL } from '../../../config/site';
+import {
+  CODES, DATA_UPDATED, countryName, countrySlug, visitPath, homePath, pairPath, passportPath, alternatesFor,
+  inboundCounts, inboundGroups, requirement, continentOf,
+} from '../../../lib/data';
+import { webPage, breadcrumbList } from '../../../lib/schema';
+
+export function getStaticPaths() {
+  return LANG_CODES.flatMap((lang) => CODES.map((code) => ({ params: { lang, destination: countrySlug(code, lang) }, props: { code } })));
+}
+
+const { lang } = Astro.params as { lang: string };
+const { code } = Astro.props;
+const ui = getUI(lang);
+const v = ui.visit;
+const year = new Date().getUTCFullYear();
+const destination = countryName(code, lang);
+const counts = inboundCounts(code);
+const date = formatDate(lang, DATA_UPDATED);
+const vars = {
+  destination, year, date,
+  open: num(lang, counts.open), vf: num(lang, counts.visa_free), voa: num(lang, counts.visa_on_arrival),
+  eta: num(lang, counts.eta), ev: num(lang, counts.e_visa), vr: num(lang, counts.visa_required),
+};
+const path = visitPath(lang, code);
+const url = `${SITE_URL}${path}`;
+const title = fmt(v.title, vars);
+const description = fmt(v.description, vars);
+const crumbs = [{ name: ui.nav.home, path: homePath(lang) }, { name: ui.nav.destinations }, { name: destination }];
+const jsonLd = [
+  webPage({ url, name: title, description, lang, crumbs, about: { '@type': 'Country', name: countryName(code, 'en') } }),
+  breadcrumbList(url, crumbs),
+];
+---
+
+<BaseLayout {lang} {title} {description} {path} alternates={alternatesFor((l) => visitPath(l, code))} {jsonLd}>
+  <Breadcrumbs items={crumbs} />
+
+  <section class="wrap mt-5">
+    <div class="overflow-hidden rounded-xl border border-line bg-surface">
+      <div class="grid gap-6 p-5 sm:p-8 md:grid-cols-[auto_1fr]">
+        <Flag code={code} size="xl" eager class="!w-[72px] !h-[48px] sm:!w-[84px] sm:!h-[56px]" />
+        <div>
+          <p class="eyebrow">{ui.common.destination} · {ui.continents[continentOf(code)]}</p>
+          <h1 class="mt-2 text-3xl leading-tight md:text-[2.6rem]">{fmt(v.h1, vars)}</h1>
+          <p class="mt-2 text-sm text-muted">{fmt(ui.common.updated, { date })}</p>
+        </div>
+      </div>
+      <div class="border-t border-line px-5 py-6 sm:px-8"><StatusBar {lang} {counts} /></div>
+      <div class="border-t border-line px-5 py-6 sm:px-8">
+        <p class="max-w-3xl text-lg leading-relaxed" data-answer>{fmt(v.summary, vars)}</p>
+        <a href={passportPath(lang, code)} class="link mt-3 inline-block font-semibold">{fmt(ui.passport.h1, { country: destination })}</a>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot slot="top" />
+
+  <section class="wrap mt-10" aria-label={fmt(v.tableTitle, vars)}>
+    <CountryGroups
+      {lang}
+      groups={inboundGroups(code)}
+      heading={(s) => `${ui.status[s]} · ${destination}`}
+      href={(from) => pairPath(lang, from, code)}
+      days={(from) => requirement(from, code)?.days ?? null}
+    />
+  </section>
+
+  <Affiliates {lang} />
+  <AdSlot slot="bottom" />
+
+  <section class="wrap mt-14 border-t border-line pt-6">
+    <p class="flex max-w-3xl gap-2 text-sm text-muted"><Icon name="info" size={18} class="mt-0.5" />{ui.common.officialCheck}</p>
+  </section>
+</BaseLayout>

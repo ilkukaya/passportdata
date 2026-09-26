@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { LANG_CODES, getUI, fmt, formatDate } from '../../i18n';
+import { CONTACT_EMAIL, SITE_URL } from '../../config/site';
+import { homePath, toolPath, alternatesFor } from '../../lib/data';
+import { webPage, breadcrumbList } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return LANG_CODES.map((lang) => ({ params: { lang } }));
+}
+const { lang } = Astro.params as { lang: string };
+const ui = getUI(lang);
+const doc = ui.privacy;
+const path = toolPath(lang, 'privacy');
+const url = `${SITE_URL}${path}`;
+const crumbs = [{ name: ui.nav.home, path: homePath(lang) }, { name: doc.title }];
+const jsonLd = [webPage({ url, name: doc.title, description: doc.description, lang, crumbs }), breadcrumbList(url, crumbs)];
+const vars = { site: SITE_URL.replace(/^https?:\/\//, ''), email: CONTACT_EMAIL || `${SITE_URL}/${lang}/about/#contact` };
+// Bump when the policy text changes.
+const POLICY_DATE = '2026-09-26';
+---
+<BaseLayout {lang} title={`${doc.title} | PassportData`} description={doc.description} {path} alternates={alternatesFor((l) => toolPath(l, 'privacy'))} {jsonLd}>
+  <Breadcrumbs items={crumbs} />
+  <article class="wrap mt-5 max-w-3xl prose-text">
+    <h1 class="text-3xl md:text-4xl mb-2">{doc.h1}</h1>
+    {'updated' in doc && <p class="text-sm text-muted">{fmt((doc as any).updated, { date: formatDate(lang, POLICY_DATE) })}</p>}
+    {doc.sections.map((s) => (<><h2>{s.h}</h2><p>{fmt(s.p, vars)}</p></>))}
+  </article>
+</BaseLayout>

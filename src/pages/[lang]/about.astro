@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import { LANG_CODES, getUI, fmt } from '../../i18n';
+import { CONTACT_EMAIL, SITE_URL } from '../../config/site';
+import { STATUSES, homePath, toolPath, alternatesFor, DATA_SOURCE } from '../../lib/data';
+import { webPage, breadcrumbList } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return LANG_CODES.map((lang) => ({ params: { lang } }));
+}
+const { lang } = Astro.params as { lang: string };
+const ui = getUI(lang);
+const path = toolPath(lang, 'about');
+const url = `${SITE_URL}${path}`;
+const crumbs = [{ name: ui.nav.home, path: homePath(lang) }, { name: ui.footer.about }];
+const jsonLd = [webPage({ url, name: ui.about.title, description: ui.about.description, lang, crumbs, type: 'AboutPage' }), breadcrumbList(url, crumbs)];
+---
+<BaseLayout {lang} title={`${ui.about.title} | PassportData`} description={ui.about.description} {path} alternates={alternatesFor((l) => toolPath(l, 'about'))} {jsonLd}>
+  <Breadcrumbs items={crumbs} />
+  <article class="wrap mt-5 max-w-3xl prose-text">
+    <h1 class="text-3xl md:text-4xl mb-6">{ui.about.h1}</h1>
+    {ui.about.body.map((p) => <p>{p}</p>)}
+    <p class="text-sm">{ui.common.sources}: <a class="link" href={DATA_SOURCE.url} rel="noopener">{DATA_SOURCE.name}</a> · <a class="link" href={DATA_SOURCE.origin} rel="noopener">passportindex.org</a> · <a class="link" href="/api/v1/visa-requirements.json">JSON</a></p>
+    <h2>{ui.about.methodTitle}</h2>
+    <dl class="space-y-3">
+      {STATUSES.map((s) => (
+        <div><dt><StatusBadge {lang} status={s} /></dt><dd class="mt-1 text-ink/85">{ui.statusDesc[s]}</dd></div>
+      ))}
+    </dl>
+    <h2 id="contact">{ui.about.contactTitle}</h2>
+    <p>{CONTACT_EMAIL ? fmt(ui.about.contactText, { email: CONTACT_EMAIL }) : ui.about.contactNoEmail}</p>
+    {CONTACT_EMAIL && <p><a class="btn" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>}
+  </article>
+</BaseLayout>

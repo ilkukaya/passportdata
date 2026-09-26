@@ -1,9 +1,19 @@
-name: Weekly Visa Data Update
+name: Weekly visa data update
 
+# Netlify is connected to this repository and rebuilds the site automatically on every push
+# to the production branch, so this workflow only needs to refresh the data and commit it.
 on:
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: '17 5 * * 1' # Mondays 05:17 UTC
   workflow_dispatch:
+    inputs:
+      indexnow:
+        description: 'Also notify IndexNow (Bing, Yandex…) about all URLs'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 jobs:
   update:
@@ -11,23 +21,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
+          node-version: '20'
 
-      - name: Install Python dependencies
-        run: pip install requests beautifulsoup4 pandas lxml
+      - name: Download latest open visa dataset
+        run: node scripts/update-data.mjs
 
-      - name: Run visa data update
+      - name: Commit changes
+        id: commit
         run: |
-          python src/scripts/fetch_passport_index.py
-          python src/scripts/fetch_henley.py
-
-      - name: Commit updated data
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/
-          git diff --staged --quiet || git commit -m "chore: weekly visa data update $(date +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "No data changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore(data): visa data update $(date -u +%Y-%m-%d)"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify IndexNow after Netlify has deployed
+        if: steps.commit.outputs.changed == 'true' || inputs.indexnow
+        run: |
+          if [ "${{ steps.commit.outputs.changed }}" = "true" ]; then sleep 900; fi  # wait for the Netlify build
+          node scripts/indexnow.mjs

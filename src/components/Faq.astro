@@ -1,0 +1,19 @@
+---
+import type { QA } from '../lib/schema';
+interface Props { title: string; items: QA[] }
+const { title, items } = Astro.props;
+---
+<section class="wrap mt-16" id="faq">
+  <h2 class="h-section">{title}</h2>
+  <div class="border-t border-line">
+    {items.map((it, i) => (
+      <details class="group border-b border-line" open={i === 0}>
+        <summary class="flex cursor-pointer items-start justify-between gap-6 py-4">
+          <h3 class="font-sans text-base font-semibold tracking-normal">{it.q}</h3>
+          <span aria-hidden="true" class="mt-0.5 text-xl leading-none text-muted transition-transform group-open:rotate-45">+</span>
+        </summary>
+        <p class="pb-5 -mt-1 max-w-3xl text-ink/85 leading-relaxed">{it.a}</p>
+      </details>
+    ))}
+  </div>
+</section>

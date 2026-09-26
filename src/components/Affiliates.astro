@@ -1,0 +1,36 @@
+---
+import Icon from './Icon.astro';
+import { getUI } from '../i18n';
+import { AFFILIATES } from '../config/site';
+interface Props { lang: string; visa?: boolean }
+const { lang, visa = false } = Astro.props;
+const ui = getUI(lang).affiliate;
+const items = [
+  visa && AFFILIATES.ivisa && { href: AFFILIATES.ivisa, title: ui.visaTitle, text: ui.visaText, icon: 'stamp' },
+  AFFILIATES.safetywing && {
+    href: `https://safetywing.com/nomad-insurance?referenceID=${encodeURIComponent(AFFILIATES.safetywing)}&utm_source=${encodeURIComponent(AFFILIATES.safetywing)}&utm_medium=Ambassador`,
+    title: ui.insuranceTitle, text: ui.insuranceText, icon: 'shield',
+  },
+  AFFILIATES.airalo && { href: AFFILIATES.airalo, title: ui.esimTitle, text: ui.esimText, icon: 'sim' },
+  AFFILIATES.booking && { href: AFFILIATES.booking, title: ui.hotelTitle, text: ui.hotelText, icon: 'bed' },
+].filter(Boolean) as { href: string; title: string; text: string; icon: string }[];
+---
+{items.length > 0 && (
+  <section class="wrap mt-16" aria-labelledby="aff-title">
+    <div class="flex items-baseline justify-between gap-4 mb-5">
+      <h2 id="aff-title" class="h-section !mb-0">{ui.title}</h2>
+      <span class="eyebrow">{ui.sponsored}</span>
+    </div>
+    <div class="grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+      {items.map((it) => (
+        <a href={it.href} target="_blank" rel="sponsored noopener" class="group flex gap-4 bg-surface p-5 hover:bg-sunken/60">
+          <Icon name={it.icon} size={22} class="mt-0.5 text-brass" />
+          <span>
+            <span class="block font-semibold group-hover:text-brand">{it.title}</span>
+            <span class="mt-1 block text-sm text-muted">{it.text}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+)}

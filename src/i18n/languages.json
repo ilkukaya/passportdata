@@ -1,0 +1,17 @@
+[
+  { "code": "en", "name": "English", "hreflang": "en", "ogLocale": "en_US", "dir": "ltr", "latinSlugs": true },
+  { "code": "zh", "name": "中文", "hreflang": "zh-Hans", "ogLocale": "zh_CN", "dir": "ltr", "latinSlugs": false },
+  { "code": "hi", "name": "हिन्दी", "hreflang": "hi", "ogLocale": "hi_IN", "dir": "ltr", "latinSlugs": false },
+  { "code": "es", "name": "Español", "hreflang": "es", "ogLocale": "es_ES", "dir": "ltr", "latinSlugs": true },
+  { "code": "ar", "name": "العربية", "hreflang": "ar", "ogLocale": "ar_AR", "dir": "rtl", "latinSlugs": false },
+  { "code": "fr", "name": "Français", "hreflang": "fr", "ogLocale": "fr_FR", "dir": "ltr", "latinSlugs": true },
+  { "code": "bn", "name": "বাংলা", "hreflang": "bn", "ogLocale": "bn_BD", "dir": "ltr", "latinSlugs": false },
+  { "code": "pt", "name": "Português", "hreflang": "pt", "ogLocale": "pt_BR", "dir": "ltr", "latinSlugs": true },
+  { "code": "ru", "name": "Русский", "hreflang": "ru", "ogLocale": "ru_RU", "dir": "ltr", "latinSlugs": false },
+  { "code": "ur", "name": "اردو", "hreflang": "ur", "ogLocale": "ur_PK", "dir": "rtl", "latinSlugs": false },
+  { "code": "id", "name": "Bahasa Indonesia", "hreflang": "id", "ogLocale": "id_ID", "dir": "ltr", "latinSlugs": true },
+  { "code": "de", "name": "Deutsch", "hreflang": "de", "ogLocale": "de_DE", "dir": "ltr", "latinSlugs": true },
+  { "code": "ja", "name": "日本語", "hreflang": "ja", "ogLocale": "ja_JP", "dir": "ltr", "latinSlugs": false },
+  { "code": "tr", "name": "Türkçe", "hreflang": "tr", "ogLocale": "tr_TR", "dir": "ltr", "latinSlugs": true },
+  { "code": "vi", "name": "Tiếng Việt", "hreflang": "vi", "ogLocale": "vi_VN", "dir": "ltr", "latinSlugs": true }
+]

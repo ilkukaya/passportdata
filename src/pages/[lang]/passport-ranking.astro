@@ -1,98 +1,135 @@
 ---
-import countries from '../../data/countries.json';
-import passportRanking from '../../data/passport_ranking.json';
-import { SUPPORTED_LANGS, useTranslations, getCountrySlug, getToolPageAlternateLinks, isRTL, type Lang } from '../../utils/i18n';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
-import AdSenseSlot from '../../components/AdSenseSlot.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Flag from '../../components/Flag.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import Icon from '../../components/Icon.astro';
+import { LANG_CODES, getUI, fmt, num, formatDate } from '../../i18n';
+import { SITE_URL } from '../../config/site';
+import { RANKING, DATA_UPDATED, countryName, passportPath, homePath, toolPath, alternatesFor, DESTINATION_COUNT, continentOf } from '../../lib/data';
+import { webPage, breadcrumbList, dataset } from '../../lib/schema';
 
 export function getStaticPaths() {
-  return SUPPORTED_LANGS.map(lang => ({ params: { lang } }));
+  return LANG_CODES.map((lang) => ({ params: { lang } }));
 }
 
-const { lang } = Astro.params;
-const t = useTranslations(lang as Lang);
-const currentYear = new Date().getFullYear();
-const alternateLinks = getToolPageAlternateLinks('passport-ranking');
-
-const title = t('seo.ranking_title', { year: String(currentYear) });
-const description = t('seo.ranking_description', { year: String(currentYear) });
-
-const breadcrumbs = [
-  { label: t('nav.home'), href: `/${lang}/` },
-  { label: t('nav.ranking') },
+const { lang } = Astro.params as { lang: string };
+const ui = getUI(lang);
+const year = new Date().getUTCFullYear();
+const date = formatDate(lang, DATA_UPDATED);
+const path = toolPath(lang, 'passport-ranking');
+const url = `${SITE_URL}${path}`;
+const title = fmt(ui.ranking.title, { year });
+const description = fmt(ui.ranking.description, { date });
+const crumbs = [{ name: ui.nav.home, path: homePath(lang) }, { name: ui.nav.ranking }];
+const max = RANKING[0].score;
+const jsonLd = [
+  webPage({ url, name: title, description, lang, crumbs, type: 'CollectionPage' }),
+  breadcrumbList(url, crumbs),
+  {
+    '@type': 'ItemList',
+    '@id': `${url}#list`,
+    name: title,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: RANKING.length,
+    itemListElement: RANKING.slice(0, 50).map((e, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `${countryName(e.code, lang)} (${e.score})`,
+      url: `${SITE_URL}${passportPath(lang, e.code)}`,
+    })),
+  },
+  dataset(lang, 'PassportData – global visa requirements', description),
 ];
-
-// Sort by rank
-const rankings = Object.entries(passportRanking as Record<string, any>)
-  .filter(([code]) => (countries as any)[code])
-  .sort(([, a], [, b]) => (a.rank || 999) - (b.rank || 999))
-  .map(([code, data]) => ({
-    code,
-    name: (countries as any)[code]?.names?.[lang] || (countries as any)[code]?.names?.en || code,
-    flag_url: (countries as any)[code]?.flag_url,
-    slug: getCountrySlug(code, lang as Lang, countries),
-    rank: data.rank,
-    total: data.total,
-  }));
 ---
 
-<BaseLayout {title} {description} lang={lang!} {alternateLinks} rtl={isRTL(lang as Lang)}>
-  <BreadcrumbNav items={breadcrumbs} lang={lang!} />
-
-  <section class="bg-gradient-to-br from-purple-900 to-indigo-900 text-white py-10">
-    <div class="container mx-auto px-4 text-center">
-      <h1 class="text-2xl md:text-3xl font-bold mb-2">
-        {t('ranking.title', { year: String(currentYear) })}
-      </h1>
-      <p class="text-purple-200">{t('ranking.subtitle')}</p>
-    </div>
+<BaseLayout {lang} {title} {description} {path} alternates={alternatesFor((l) => toolPath(l, 'passport-ranking'))} {jsonLd}>
+  <Breadcrumbs items={crumbs} />
+  <section class="wrap mt-5">
+    <h1 class="text-3xl md:text-[2.6rem] leading-tight">{fmt(ui.ranking.h1, { year })}</h1>
+    <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ink/85" data-answer>{fmt(ui.ranking.intro, { date })}</p>
+    <ol class="mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
+      {RANKING.slice(0, 3).map((e, i) => (
+        <li class="bg-surface">
+          <a href={passportPath(lang, e.code)} class="flex items-center gap-4 p-5 hover:bg-sunken/50">
+            <span class="stamp h-12 w-12 shrink-0 text-sm font-bold"><span class="num">#{e.rank}</span></span>
+            <Flag code={e.code} size="md" />
+            <span class="min-w-0">
+              <span class="block truncate font-display text-lg font-semibold">{countryName(e.code, lang)}</span>
+              <span class="num text-sm text-muted">{num(lang, e.score)} / {DESTINATION_COUNT}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
   </section>
 
-  <AdSenseSlot slot_id="ADSENSE_SLOT_5" />
+  <AdSlot slot="top" />
 
-  <section class="container mx-auto px-4 py-8">
-    <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
-            <tr>
-              <th class="px-4 py-3 text-start">{t('ranking.rank')}</th>
-              <th class="px-4 py-3 text-start">{t('table.flag')}</th>
-              <th class="px-4 py-3 text-start">{t('ranking.country')}</th>
-              <th class="px-4 py-3 text-start">{t('ranking.visa_free_access')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rankings.map((entry, i) => (
-              <tr class:list={['border-t hover:bg-gray-50 transition-colors', i < 3 ? 'bg-yellow-50/50' : '']}>
-                <td class="px-4 py-3 font-bold text-gray-900">
-                  {i < 3 ? ['🥇', '🥈', '🥉'][i] : `#${entry.rank}`}
-                </td>
-                <td class="px-4 py-3">
-                  <img src={entry.flag_url} alt={entry.name} class="w-8 h-5 object-cover rounded" loading="lazy" />
-                </td>
-                <td class="px-4 py-3 font-medium">
-                  <a href={`/${lang}/${entry.slug}/`} class="hover:text-indigo-600 transition-colors">
-                    {entry.name}
-                  </a>
-                </td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-2">
-                    <div class="flex-1 max-w-[200px] bg-gray-200 rounded-full h-2">
-                      <div
-                        class="bg-indigo-500 h-2 rounded-full"
-                        style={`width: ${Math.min((entry.total / 200) * 100, 100)}%`}
-                      ></div>
-                    </div>
-                    <span class="text-gray-700 font-medium">{entry.total} {t('ranking.destinations')}</span>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  <section class="wrap mt-10" id="ranking">
+    <div class="sticky top-14 z-30 -mx-4 flex flex-col gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 md:flex-row md:items-center">
+      <label class="relative block md:w-72">
+        <span class="sr-only">{ui.common.filter}</span>
+        <Icon name="search" size={18} class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-faint" />
+        <input type="search" id="rank-filter" class="field !py-2 ps-10" placeholder={ui.common.filter} autocomplete="off" />
+      </label>
+      <div class="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1" role="group" aria-label={ui.common.region}>
+        <button type="button" class="chip region-btn !border-brand !bg-brand !text-brand-ink" data-region="">{ui.common.all}</button>
+        {(['EU', 'AS', 'AF', 'NA', 'SA', 'OC'] as const).map((r) => <button type="button" class="chip region-btn" data-region={r}>{ui.continents[r]}</button>)}
       </div>
     </div>
+    <table class="mt-2 w-full text-sm">
+      <thead class="text-start text-xs text-muted">
+        <tr class="border-b border-line">
+          <th scope="col" class="w-12 py-3 text-start font-medium">{ui.common.rank}</th>
+          <th scope="col" class="py-3 text-start font-medium">{ui.common.passport}</th>
+          <th scope="col" class="py-3 text-start font-medium">{ui.ranking.score}</th>
+          <th scope="col" class="hidden py-3 text-end font-medium md:table-cell">{ui.ranking.breakdown}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {RANKING.map((e) => (
+          <tr id={e.code.toLowerCase()} class="rank-row scroll-mt-40 border-b border-line target:bg-brass/10" data-region={continentOf(e.code)} data-n={`${countryName(e.code, lang)} ${countryName(e.code, 'en')}`.toLowerCase()}>
+            <td class="num py-3 font-semibold text-muted">{e.rank}</td>
+            <td class="py-3">
+              <a href={passportPath(lang, e.code)} class="flex items-center gap-3 font-medium hover:text-brand"><Flag code={e.code} /><span>{countryName(e.code, lang)}</span></a>
+            </td>
+            <td class="py-3">
+              <div class="flex items-center gap-3">
+                <span class="num w-9 font-semibold">{num(lang, e.score)}</span>
+                <span class="hidden h-1.5 w-40 overflow-hidden rounded-full bg-sunken sm:flex">
+                  <span class="bar-visa_free h-full" style={`width:${(e.counts.visa_free / max) * 100}%`}></span>
+                  <span class="bar-visa_on_arrival h-full" style={`width:${(e.counts.visa_on_arrival / max) * 100}%`}></span>
+                  <span class="bar-eta h-full" style={`width:${(e.counts.eta / max) * 100}%`}></span>
+                </span>
+              </div>
+            </td>
+            <td class="num hidden py-3 text-end text-muted md:table-cell">{num(lang, e.counts.visa_free)} · {num(lang, e.counts.visa_on_arrival)} · {num(lang, e.counts.eta)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </section>
+
+  <AdSlot slot="bottom" />
+
+  <script>
+    const input = document.getElementById('rank-filter') as HTMLInputElement;
+    const rows = [...document.querySelectorAll<HTMLElement>('.rank-row')];
+    const btns = [...document.querySelectorAll<HTMLButtonElement>('.region-btn')];
+    let region = '';
+    const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+    const apply = () => {
+      const q = norm(input.value.trim());
+      rows.forEach((r) => (r.hidden = !!(region && r.dataset.region !== region) || !!(q && !norm(r.dataset.n!).includes(q))));
+    };
+    input.addEventListener('input', apply);
+    btns.forEach((b) => b.addEventListener('click', () => {
+      region = b.dataset.region!;
+      btns.forEach((x) => x.classList.toggle('!bg-brand', x === b));
+      btns.forEach((x) => x.classList.toggle('!text-brand-ink', x === b));
+      btns.forEach((x) => x.classList.toggle('!border-brand', x === b));
+      apply();
+    }));
+  </script>
 </BaseLayout>

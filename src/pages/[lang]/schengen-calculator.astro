@@ -1,156 +1,175 @@
 ---
-import { SUPPORTED_LANGS, useTranslations, getToolPageAlternateLinks, isRTL, type Lang } from '../../utils/i18n';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Flag from '../../components/Flag.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import Icon from '../../components/Icon.astro';
+import { LANG_CODES, getUI } from '../../i18n';
+import { SCHENGEN, SITE_URL } from '../../config/site';
+import { countryName, homePath, toolPath, alternatesFor, sortByName, visitPath } from '../../lib/data';
+import { webPage, breadcrumbList, faqPage } from '../../lib/schema';
 
 export function getStaticPaths() {
-  return SUPPORTED_LANGS.map(lang => ({ params: { lang } }));
+  return LANG_CODES.map((lang) => ({ params: { lang } }));
 }
 
-const { lang } = Astro.params;
-const t = useTranslations(lang as Lang);
-const alternateLinks = getToolPageAlternateLinks('schengen-calculator');
-
-const title = t('seo.schengen_title');
-const description = t('seo.schengen_description');
-
-const breadcrumbs = [
-  { label: t('nav.home'), href: `/${lang}/` },
-  { label: t('nav.schengen') },
+const { lang } = Astro.params as { lang: string };
+const ui = getUI(lang);
+const s = ui.schengen;
+const path = toolPath(lang, 'schengen-calculator');
+const url = `${SITE_URL}${path}`;
+const title = s.title;
+const description = s.description;
+const crumbs = [{ name: ui.nav.home, path: homePath(lang) }, { name: ui.nav.schengen }];
+const faq = [{ q: s.howTitle, a: s.how.join(' ') }];
+const jsonLd = [
+  webPage({ url, name: title, description, lang, crumbs, type: 'WebApplication' }),
+  breadcrumbList(url, crumbs),
+  faqPage(url, faq),
 ];
+const strings = { used: s.used, remaining: s.remaining, maxStay: s.maxStay, over: s.over, invalid: s.invalid, entry: s.entry, exit: s.exit, remove: s.remove };
 ---
 
-<BaseLayout {title} {description} lang={lang!} {alternateLinks} rtl={isRTL(lang as Lang)}>
-  <BreadcrumbNav items={breadcrumbs} lang={lang!} />
-
-  <section class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white py-10">
-    <div class="container mx-auto px-4 text-center">
-      <h1 class="text-2xl md:text-3xl font-bold mb-2">{t('tools.schengen_title')}</h1>
-      <p class="text-blue-200">{t('tools.schengen_subtitle')}</p>
-    </div>
+<BaseLayout {lang} {title} {description} {path} alternates={alternatesFor((l) => toolPath(l, 'schengen-calculator'))} {jsonLd}>
+  <Breadcrumbs items={crumbs} />
+  <section class="wrap mt-5">
+    <h1 class="text-3xl md:text-[2.6rem] leading-tight">{s.h1}</h1>
+    <p class="mt-3 max-w-3xl text-lg text-muted">{s.intro}</p>
   </section>
 
-  <section class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto">
-      <div class="bg-white rounded-2xl shadow-sm border p-6">
-        <div class="mb-6">
-          <h2 class="text-lg font-bold text-gray-900 mb-4">Your Schengen visits (last 180 days)</h2>
-
-          <div id="visits-container">
-            <div class="visit-row grid grid-cols-2 gap-3 mb-3">
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Entry date</label>
-                <input type="date" class="entry-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Exit date</label>
-                <input type="date" class="exit-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
-              </div>
-            </div>
-          </div>
-
-          <button id="add-visit" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mt-2">
-            + Add another visit
-          </button>
-        </div>
-
-        <button
-          id="calculate-btn"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors"
-        >
-          Calculate
-        </button>
-
-        <div id="result" class="hidden mt-6 p-6 rounded-xl text-center">
-          <div class="text-sm text-gray-500 mb-1">Days used in current 180-day window</div>
-          <div id="days-used" class="text-4xl font-bold text-gray-900 mb-2"></div>
-          <div class="text-sm text-gray-500 mb-1">Days remaining</div>
-          <div id="days-remaining" class="text-4xl font-bold mb-4"></div>
-          <div id="next-entry" class="text-sm text-gray-600"></div>
-        </div>
+  <section class="wrap mt-8 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
+    <div class="rounded-xl border border-line bg-surface">
+      <div class="p-5 sm:p-6">
+        <h2 class="text-lg mb-4">{s.stays}</h2>
+        <div id="stays" class="space-y-3"></div>
+        <button type="button" id="add-stay" class="btn-quiet mt-3 -ms-2.5 font-semibold text-brand">+ {s.add}</button>
       </div>
-
-      <!-- Info -->
-      <div class="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-200">
-        <h3 class="font-bold text-blue-900 mb-2">About the 90/180 day rule</h3>
-        <p class="text-sm text-blue-800">
-          Non-EU nationals can stay in the Schengen Area for a maximum of 90 days within any 180-day period.
-          This is a rolling window — the 180-day period is counted backwards from each day of presence in the Schengen area.
-        </p>
+      <div class="border-t border-line p-5 sm:p-6">
+        <label class="block max-w-xs">
+          <span class="eyebrow mb-1.5 block">{s.checkDate}</span>
+          <input type="date" id="check-date" class="field" />
+        </label>
+        <button type="button" id="calc" class="btn mt-5 w-full sm:w-auto">{s.calculate}<Icon name="arrow" size={18} class="rtl:rotate-180" /></button>
+      </div>
+      <div id="result" class="hidden border-t border-line p-5 sm:p-6" aria-live="polite">
+        <div class="grid grid-cols-2 gap-6">
+          <div><p id="r-used-label" class="text-sm text-muted"></p><p id="r-used" class="num mt-1 text-4xl font-semibold"></p></div>
+          <div><p id="r-rem-label" class="text-sm text-muted"></p><p id="r-rem" class="num mt-1 text-4xl font-semibold"></p></div>
+        </div>
+        <div class="mt-5 h-2 overflow-hidden rounded-full bg-sunken"><div id="r-bar" class="h-full rounded-full bg-brand transition-all" style="width:0"></div></div>
+        <p id="r-msg" class="mt-4 font-medium"></p>
       </div>
     </div>
+    <aside class="space-y-6">
+      <div>
+        <h2 class="text-lg mb-3">{s.membersTitle} <span class="num font-sans text-sm font-normal text-muted">({SCHENGEN.length})</span></h2>
+        <ul class="grid grid-cols-2 gap-x-6 border-t border-line text-sm">
+          {sortByName(SCHENGEN, lang).map((c) => (
+            <li><a href={visitPath(lang, c)} class="crow !py-2"><Flag code={c} /><span class="cname">{countryName(c, lang)}</span></a></li>
+          ))}
+        </ul>
+      </div>
+      <p class="flex gap-2 text-xs text-muted"><Icon name="info" size={16} />{s.disclaimer}</p>
+    </aside>
   </section>
+
+  <section class="wrap mt-14 max-w-3xl prose-text">
+    <h2 class="!mt-0">{s.howTitle}</h2>
+    {s.how.map((para) => <p>{para}</p>)}
+  </section>
+
+  <AdSlot slot="bottom" />
+
+  <template id="stay-tpl">
+    <div class="stay grid grid-cols-[1fr_1fr_auto] items-end gap-3">
+      <label class="block"><span class="mb-1 block text-xs text-muted">{s.entry}</span><input type="date" class="field !py-2 entry" /></label>
+      <label class="block"><span class="mb-1 block text-xs text-muted">{s.exit}</span><input type="date" class="field !py-2 exit" /></label>
+      <button type="button" class="remove btn-quiet !py-2.5" aria-label={s.remove}><Icon name="close" size={18} /></button>
+    </div>
+  </template>
+  <script type="application/json" id="sc-data" set:html={JSON.stringify({ lang, strings })} />
 </BaseLayout>
 
 <script>
-  document.getElementById('add-visit')?.addEventListener('click', () => {
-    const container = document.getElementById('visits-container');
-    const row = document.createElement('div');
-    row.className = 'visit-row grid grid-cols-2 gap-3 mb-3';
-    row.innerHTML = `
-      <div>
-        <label class="block text-xs text-gray-500 mb-1">Entry date</label>
-        <input type="date" class="entry-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
-      </div>
-      <div>
-        <label class="block text-xs text-gray-500 mb-1">Exit date</label>
-        <input type="date" class="exit-date w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" />
-      </div>
-    `;
-    container?.appendChild(row);
-  });
+  const { lang, strings } = JSON.parse(document.getElementById('sc-data')!.textContent!);
+  const DAY = 86_400_000;
+  const toDay = (v: string) => Math.floor(Date.parse(`${v}T00:00:00Z`) / DAY);
+  const fromDay = (d: number) => new Date(d * DAY);
+  const fmtDate = (d: number) => new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeZone: 'UTC' }).format(fromDay(d));
+  const iso = (d: number) => fromDay(d).toISOString().slice(0, 10);
+  // Tailwind classes built at runtime: text-emerald-600 text-amber-600 text-rose-600 bg-emerald-500 bg-amber-500 bg-rose-500
+  const fill = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (m, k) => (k in v ? String(v[k]) : m));
+  const staysEl = document.getElementById('stays')!;
+  const tpl = document.getElementById('stay-tpl') as HTMLTemplateElement;
+  const checkInput = document.getElementById('check-date') as HTMLInputElement;
+  const STORE = 'pd_schengen_v1';
 
-  document.getElementById('calculate-btn')?.addEventListener('click', () => {
-    const entries = document.querySelectorAll('.entry-date');
-    const exits = document.querySelectorAll('.exit-date');
-    const visits: { entry: Date; exit: Date }[] = [];
+  function addStay(entry = '', exit = '') {
+    const node = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+    (node.querySelector('.entry') as HTMLInputElement).value = entry;
+    (node.querySelector('.exit') as HTMLInputElement).value = exit;
+    node.querySelector('.remove')!.addEventListener('click', () => { node.remove(); if (!staysEl.children.length) addStay(); });
+    staysEl.append(node);
+  }
 
-    entries.forEach((el, i) => {
-      const entry = (el as HTMLInputElement).value;
-      const exit = (exits[i] as HTMLInputElement).value;
-      if (entry && exit) {
-        visits.push({ entry: new Date(entry), exit: new Date(exit) });
-      }
+  /** Number of days in the set within the 180-day window ending on `day` (inclusive). */
+  const windowCount = (days: Set<number>, day: number) => {
+    let n = 0;
+    for (let d = day - 179; d <= day; d++) if (days.has(d)) n++;
+    return n;
+  };
+
+  function calculate() {
+    const days = new Set<number>();
+    const saved: [string, string][] = [];
+    staysEl.querySelectorAll('.stay').forEach((row) => {
+      const e = (row.querySelector('.entry') as HTMLInputElement).value;
+      const x = (row.querySelector('.exit') as HTMLInputElement).value;
+      if (!e || !x || toDay(x) < toDay(e)) return;
+      saved.push([e, x]);
+      for (let d = toDay(e); d <= toDay(x); d++) days.add(d);
     });
-
-    if (visits.length === 0) return;
-
-    const today = new Date();
-    const windowStart = new Date(today);
-    windowStart.setDate(windowStart.getDate() - 180);
-
-    let daysUsed = 0;
-    visits.forEach(v => {
-      const effectiveStart = v.entry < windowStart ? windowStart : v.entry;
-      const effectiveEnd = v.exit > today ? today : v.exit;
-      if (effectiveStart <= effectiveEnd) {
-        daysUsed += Math.ceil((effectiveEnd.getTime() - effectiveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      }
-    });
-
-    const remaining = Math.max(0, 90 - daysUsed);
-
-    const resultEl = document.getElementById('result');
-    const usedEl = document.getElementById('days-used');
-    const remainingEl = document.getElementById('days-remaining');
-    const nextEl = document.getElementById('next-entry');
-
-    if (resultEl && usedEl && remainingEl && nextEl) {
-      usedEl.textContent = `${daysUsed} / 90`;
-      remainingEl.textContent = String(remaining);
-      remainingEl.className = `text-4xl font-bold mb-4 ${remaining > 30 ? 'text-green-600' : remaining > 0 ? 'text-yellow-600' : 'text-red-600'}`;
-      resultEl.className = `mt-6 p-6 rounded-xl text-center ${remaining > 30 ? 'bg-green-50' : remaining > 0 ? 'bg-yellow-50' : 'bg-red-50'}`;
-
-      if (remaining === 0) {
-        // Calculate when the oldest visit exits the 180-day window
-        const oldest = visits.sort((a, b) => a.entry.getTime() - b.entry.getTime())[0];
-        const reentry = new Date(oldest.exit);
-        reentry.setDate(reentry.getDate() + 181);
-        nextEl.textContent = `You can re-enter from: ${reentry.toLocaleDateString()}`;
-      } else {
-        nextEl.textContent = `You can stay ${remaining} more days in the current window.`;
-      }
-      resultEl.classList.remove('hidden');
+    const result = document.getElementById('result')!;
+    const msg = document.getElementById('r-msg')!;
+    result.classList.remove('hidden');
+    if (!saved.length) {
+      msg.textContent = strings.invalid;
+      return;
     }
-  });
+    try { localStorage.setItem(STORE, JSON.stringify(saved)); } catch {}
+    const check = checkInput.value ? toDay(checkInput.value) : Math.floor(Date.now() / DAY);
+    // Days already used in the window that ends the day before the check date.
+    const used = windowCount(days, check - 1);
+    const remaining = Math.max(0, 90 - used);
+    let stay = 0;
+    const sim = new Set(days);
+    while (stay < 90) {
+      const d = check + stay;
+      const had = sim.has(d);
+      sim.add(d);
+      if (windowCount(sim, d) > 90) { if (!had) sim.delete(d); break; }
+      stay++;
+    }
+    const date = fmtDate(check);
+    document.getElementById('r-used-label')!.textContent = fill(strings.used, { date: fmtDate(check - 1) });
+    document.getElementById('r-used')!.textContent = `${used} / 90`;
+    document.getElementById('r-rem-label')!.textContent = fill(strings.remaining, { date });
+    const rem = document.getElementById('r-rem')!;
+    rem.textContent = String(remaining);
+    const tone = stay > 30 ? 'emerald' : stay > 0 ? 'amber' : 'rose';
+    rem.className = `num mt-1 text-4xl font-semibold text-${tone}-600`;
+    const bar = document.getElementById('r-bar')!;
+    bar.style.width = `${Math.min(100, (used / 90) * 100)}%`;
+    bar.className = `h-full rounded-full transition-all bg-${tone}-500`;
+    msg.textContent = used > 90
+      ? fill(strings.over, { date, n: used - 90 })
+      : fill(strings.maxStay, { date, n: stay, until: fmtDate(check + Math.max(stay, 1) - 1) });
+  }
+
+  let restored: [string, string][] = [];
+  try { restored = JSON.parse(localStorage.getItem(STORE) || '[]'); } catch {}
+  if (restored.length) restored.forEach(([e, x]) => addStay(e, x)); else addStay();
+  checkInput.value = iso(Math.floor(Date.now() / DAY));
+  document.getElementById('add-stay')!.addEventListener('click', () => addStay());
+  document.getElementById('calc')!.addEventListener('click', calculate);
 </script>

@@ -1,18 +1,26 @@
 {
   "name": "passportdata",
   "type": "module",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
+    "prebuild": "node scripts/prebuild.mjs",
     "build": "astro build",
     "preview": "astro preview",
+    "check": "astro check && node scripts/check-i18n.mjs",
+    "data:update": "node scripts/update-data.mjs",
+    "images": "node scripts/generate-images.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.16.0",
     "@astrojs/tailwind": "^5.1.0",
-    "@astrojs/sitemap": "^3.2.0",
+    "@fontsource/fraunces": "^5.3.0",
+    "astro": "^4.16.0",
     "tailwindcss": "^3.4.0"
   }
 }
