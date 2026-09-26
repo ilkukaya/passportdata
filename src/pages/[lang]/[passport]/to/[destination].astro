@@ -4,6 +4,7 @@ import Breadcrumbs from '../../../../components/Breadcrumbs.astro';
 import Flag from '../../../../components/Flag.astro';
 import StatusBadge from '../../../../components/StatusBadge.astro';
 import Faq from '../../../../components/Faq.astro';
+import Icon from '../../../../components/Icon.astro';
 import AdSlot from '../../../../components/AdSlot.astro';
 import Affiliates from '../../../../components/Affiliates.astro';
 import { LANG_CODES, getUI, fmt, num, formatDate } from '../../../../i18n';
@@ -89,47 +90,67 @@ const jsonLd = [
 >
   <Breadcrumbs items={crumbs} />
 
-  <section class="wrap mt-4">
-    <div class="card p-6 md:p-8">
-      <div class="flex items-center justify-center gap-4 md:gap-8 mb-6">
-        <a href={passportPath(lang, from)} class="text-center"><Flag code={from} size="lg" eager /><span class="block mt-2 text-sm font-semibold">{origin}</span></a>
-        <span class="text-3xl text-slate-300 rtl:rotate-180" aria-hidden="true">→</span>
-        <a href={visitPath(lang, to)} class="text-center"><Flag code={to} size="lg" eager /><span class="block mt-2 text-sm font-semibold">{destination}</span></a>
+  <section class="wrap mt-5">
+    <h1 class="max-w-3xl text-3xl leading-tight md:text-[2.5rem]">{fmt(r.h1, vars)}</h1>
+
+    <div class="ticket mt-6 overflow-hidden">
+      <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 p-5 sm:gap-6 sm:p-8">
+        <a href={passportPath(lang, from)} class="group min-w-0">
+          <p class="eyebrow">{ui.common.passport}</p>
+          <p class="mt-2 flex items-center gap-3"><Flag code={from} size="md" eager /><span class="num font-mono text-2xl font-semibold sm:text-3xl">{from}</span></p>
+          <p class="mt-1 truncate text-sm text-muted group-hover:text-brand">{origin}</p>
+        </a>
+        <div class="flex items-center gap-2 text-faint" aria-hidden="true">
+          <span class="hidden w-10 border-t-2 border-dotted border-line sm:block md:w-24"></span>
+          <Icon name="plane" size={26} class="rotate-45 text-brass rtl:-rotate-[135deg]" />
+          <span class="hidden w-10 border-t-2 border-dotted border-line sm:block md:w-24"></span>
+        </div>
+        <a href={visitPath(lang, to)} class="group min-w-0 text-end">
+          <p class="eyebrow">{ui.common.destination}</p>
+          <p class="mt-2 flex items-center justify-end gap-3"><span class="num font-mono text-2xl font-semibold sm:text-3xl">{to}</span><Flag code={to} size="md" eager /></p>
+          <p class="mt-1 truncate text-sm text-muted group-hover:text-brand">{destination}</p>
+        </a>
       </div>
-      <h1 class="text-2xl md:text-3xl text-center">{fmt(r.h1, vars)}</h1>
-      <div class="mt-6 flex flex-col items-center gap-3 text-center">
-        <StatusBadge {lang} status={req.status} class="!text-base !px-4 !py-1.5" />
-        <p class="text-lg text-slate-800 max-w-2xl leading-relaxed" data-answer>{answer}</p>
-        {stay && <p class="text-slate-600">{stay}</p>}
-        <p class="text-sm text-slate-500 max-w-2xl">{ui.statusDesc[req.status]}</p>
-        <p class="text-xs text-slate-400">{fmt(ui.common.updated, { date })}</p>
+      <div class="ticket-cut"></div>
+      <div class="grid gap-6 p-5 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
+        <div>
+          <StatusBadge {lang} status={req.status} class="!px-3 !py-1 !text-sm" />
+          <p class="mt-3 text-xl leading-snug md:text-2xl" data-answer>{answer}</p>
+          <p class="mt-2 text-muted">{ui.statusDesc[req.status]}</p>
+        </div>
+        <dl class="grid grid-cols-2 gap-x-8 gap-y-3 border-line md:border-s md:ps-8">
+          <div><dt class="eyebrow">{ui.common.maxStay}</dt><dd class="num mt-1 text-2xl font-semibold">{req.days ? fmt(ui.common.days, { n: num(lang, req.days) }) : '—'}</dd></div>
+          <div><dt class="eyebrow">{ui.common.status}</dt><dd class="mt-1 font-semibold">{ui.status[req.status]}</dd></div>
+          <div class="col-span-2"><dt class="eyebrow">{ui.common.sources}</dt><dd class="mt-1 text-sm text-muted">{fmt(ui.common.updated, { date })}</dd></div>
+        </dl>
       </div>
+      {stay && !req.days && <p class="border-t border-line px-5 py-3 text-sm text-muted sm:px-8">{stay}</p>}
     </div>
   </section>
 
   <AdSlot slot="top" />
 
-  {req.status !== 'no_admission' && (
-    <section class="wrap mt-10">
-      <h2 class="section-title">{r.prepareTitle}</h2>
-      <ul class="card divide-y divide-slate-100">
-        {prepare.map((item) => (
-          <li class="flex gap-3 px-5 py-3"><span class="text-emerald-600" aria-hidden="true">✓</span><span>{item}</span></li>
-        ))}
-      </ul>
-    </section>
-  )}
-
-  {reverse && (
-    <section class="wrap mt-10">
-      <h2 class="section-title">{r.reverseTitle}</h2>
-      <a href={pairPath(lang, to, from)} class="card flex items-center gap-4 p-5 hover:shadow-md transition-shadow">
-        <Flag code={to} size="md" /><span aria-hidden="true" class="rtl:rotate-180">→</span><Flag code={from} size="md" />
-        <span class="flex-1">{fmt(r.reverse, { ...vars, status: ui.status[reverse.status] })}</span>
-        <StatusBadge {lang} status={reverse.status} />
-      </a>
-    </section>
-  )}
+  <div class="wrap mt-12 grid gap-12 lg:grid-cols-2">
+    {req.status !== 'no_admission' && (
+      <section>
+        <h2 class="h-section">{r.prepareTitle}</h2>
+        <ul class="border-t border-line">
+          {prepare.map((item) => (
+            <li class="flex gap-3 border-b border-line py-3"><Icon name="check" size={18} class="mt-0.5 text-emerald-600" /><span>{item}</span></li>
+          ))}
+        </ul>
+      </section>
+    )}
+    {reverse && (
+      <section>
+        <h2 class="h-section">{r.reverseTitle}</h2>
+        <a href={pairPath(lang, to, from)} class="panel flex items-center gap-4 p-5 hover:border-brand/40">
+          <Flag code={to} size="md" /><Icon name="arrow" size={18} class="text-faint rtl:rotate-180" /><Flag code={from} size="md" />
+          <span class="flex-1 text-sm">{fmt(r.reverse, { ...vars, status: ui.status[reverse.status] })}</span>
+        </a>
+      </section>
+    )}
+  </div>
 
   <Faq title={ui.common.faq} items={faq} />
 
@@ -137,35 +158,28 @@ const jsonLd = [
 
   <AdSlot slot="inContent" />
 
-  <section class="wrap mt-12 grid gap-8 lg:grid-cols-2">
+  <section class="wrap mt-16 grid gap-12 lg:grid-cols-2">
     <div>
-      <h2 class="section-title">{fmt(r.otherDestinations, vars)}</h2>
-      <ul class="grid gap-2 sm:grid-cols-2">
-        {otherDest.map((d) => {
-          const q = requirement(from, d)!;
-          return (
-            <li><a href={pairPath(lang, from, d)} class="tile-sm">
-              <Flag code={d} /><span class="tname text-sm">{countryName(d, lang)}</span><StatusBadge {lang} status={q.status} />
-            </a></li>
-          );
-        })}
+      <h2 class="h-section">{fmt(r.otherDestinations, vars)}</h2>
+      <ul class="border-t border-line">
+        {otherDest.map((d) => (
+          <li><a href={pairPath(lang, from, d)} class="crow"><Flag code={d} /><span class="cname">{countryName(d, lang)}</span><StatusBadge {lang} status={requirement(from, d)!.status} /></a></li>
+        ))}
       </ul>
+      <a href={passportPath(lang, from)} class="link mt-4 inline-block text-sm font-semibold">{fmt(ui.passport.h1, { country: origin })}</a>
     </div>
     <div>
-      <h2 class="section-title">{fmt(r.otherPassports, vars)}</h2>
-      <ul class="grid gap-2 sm:grid-cols-2">
-        {otherPass.map((o) => {
-          const q = requirement(o, to)!;
-          return (
-            <li><a href={pairPath(lang, o, to)} class="tile-sm">
-              <Flag code={o} /><span class="tname text-sm">{countryName(o, lang)}</span><StatusBadge {lang} status={q.status} />
-            </a></li>
-          );
-        })}
+      <h2 class="h-section">{fmt(r.otherPassports, vars)}</h2>
+      <ul class="border-t border-line">
+        {otherPass.map((o) => (
+          <li><a href={pairPath(lang, o, to)} class="crow"><Flag code={o} /><span class="cname">{countryName(o, lang)}</span><StatusBadge {lang} status={requirement(o, to)!.status} /></a></li>
+        ))}
       </ul>
-      <a href={visitPath(lang, to)} class="inline-block mt-3 text-sm font-semibold text-indigo-700 hover:underline">{fmt(ui.visit.link, vars)} →</a>
+      <a href={visitPath(lang, to)} class="link mt-4 inline-block text-sm font-semibold">{fmt(ui.visit.link, vars)}</a>
     </div>
   </section>
 
-  <section class="wrap mt-10"><p class="text-sm text-slate-500 max-w-4xl">{ui.common.officialCheck}</p></section>
+  <section class="wrap mt-14 border-t border-line pt-6">
+    <p class="flex max-w-3xl gap-2 text-sm text-muted"><Icon name="info" size={18} class="mt-0.5" />{ui.common.officialCheck}</p>
+  </section>
 </BaseLayout>

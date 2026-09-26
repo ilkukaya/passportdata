@@ -20,6 +20,8 @@ export default {
     skip: 'مواد پر جائیں',
   },
   common: {
+    details: "تفصیلات",
+    swap: "تبدیل کریں",
     days: '{n} دن',
     upToDays: '{n} دن تک',
     updated: 'معلومات کی تازہ کاری: {date}',

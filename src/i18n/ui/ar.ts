@@ -20,6 +20,8 @@ export default {
     skip: 'انتقل إلى المحتوى',
   },
   common: {
+    details: "التفاصيل",
+    swap: "تبديل",
     days: '{n} يومًا',
     upToDays: 'حتى {n} يومًا',
     updated: 'تاريخ تحديث البيانات: {date}',

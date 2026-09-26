@@ -1,18 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CountrySearch from '../components/CountrySearch.astro';
+import TripChecker from '../components/TripChecker.astro';
 import { LANGUAGES, getUI } from '../i18n';
 import { homePath } from '../lib/data';
 const ui = getUI('en');
 ---
 <BaseLayout lang="en" title={`${ui.notFound.title} | PassportData`} description={ui.notFound.text} path="/404/" noindex>
-  <section class="wrap py-16 text-center max-w-xl">
-    <p class="text-6xl font-bold text-indigo-200">404</p>
-    <h1 class="text-3xl mt-2">{ui.notFound.title}</h1>
-    <p class="mt-3 text-slate-600">{ui.notFound.text}</p>
-    <div class="mt-8 text-start"><CountrySearch lang="en" /></div>
-    <ul class="mt-8 flex flex-wrap justify-center gap-3 text-sm">
-      {LANGUAGES.map((l) => <li><a href={homePath(l.code)} class="text-indigo-700 hover:underline" hreflang={l.hreflang}>{l.name}</a></li>)}
+  <section class="wrap max-w-3xl py-16">
+    <p class="font-mono text-sm tracking-[0.2em] text-stamp">ERROR 404 · ENTRY DENIED</p>
+    <h1 class="mt-3 text-4xl">{ui.notFound.title}</h1>
+    <p class="mt-3 text-lg text-muted">{ui.notFound.text}</p>
+    <div class="mt-8"><TripChecker lang="en" /></div>
+    <ul class="mt-10 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+      {LANGUAGES.map((l) => <li><a href={homePath(l.code)} class="link" hreflang={l.hreflang} lang={l.hreflang}>{l.name}</a></li>)}
     </ul>
   </section>
 </BaseLayout>

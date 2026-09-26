@@ -19,14 +19,14 @@ const jsonLd = [webPage({ url, name: ui.about.title, description: ui.about.descr
 ---
 <BaseLayout {lang} title={`${ui.about.title} | PassportData`} description={ui.about.description} {path} alternates={alternatesFor((l) => toolPath(l, 'about'))} {jsonLd}>
   <Breadcrumbs items={crumbs} />
-  <article class="wrap mt-4 max-w-3xl prose-text">
+  <article class="wrap mt-5 max-w-3xl prose-text">
     <h1 class="text-3xl md:text-4xl mb-6">{ui.about.h1}</h1>
     {ui.about.body.map((p) => <p>{p}</p>)}
-    <p class="text-sm">{ui.common.sources}: <a class="text-indigo-700 hover:underline" href={DATA_SOURCE.url} rel="noopener">{DATA_SOURCE.name}</a> · <a class="text-indigo-700 hover:underline" href={DATA_SOURCE.origin} rel="noopener">passportindex.org</a> · <a class="text-indigo-700 hover:underline" href="/api/v1/visa-requirements.json">JSON</a></p>
+    <p class="text-sm">{ui.common.sources}: <a class="link" href={DATA_SOURCE.url} rel="noopener">{DATA_SOURCE.name}</a> · <a class="link" href={DATA_SOURCE.origin} rel="noopener">passportindex.org</a> · <a class="link" href="/api/v1/visa-requirements.json">JSON</a></p>
     <h2>{ui.about.methodTitle}</h2>
     <dl class="space-y-3">
       {STATUSES.map((s) => (
-        <div><dt><StatusBadge {lang} status={s} /></dt><dd class="mt-1 text-slate-700">{ui.statusDesc[s]}</dd></div>
+        <div><dt><StatusBadge {lang} status={s} /></dt><dd class="mt-1 text-ink/85">{ui.statusDesc[s]}</dd></div>
       ))}
     </dl>
     <h2 id="contact">{ui.about.contactTitle}</h2>

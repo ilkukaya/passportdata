@@ -3,12 +3,12 @@ import type { Crumb } from '../lib/schema';
 interface Props { items: Crumb[] }
 const { items } = Astro.props;
 ---
-<nav aria-label="Breadcrumb" class="wrap pt-4 text-sm text-slate-500">
-  <ol class="flex flex-wrap items-center gap-1.5">
+<nav aria-label="Breadcrumb" class="wrap pt-5 text-sm text-muted">
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
     {items.map((c, i) => (
-      <li class="flex items-center gap-1.5">
-        {i > 0 && <span aria-hidden="true" class="text-slate-300 rtl:rotate-180">›</span>}
-        {c.path ? <a href={c.path} class="hover:text-indigo-700">{c.name}</a> : <span aria-current="page" class="text-slate-700">{c.name}</span>}
+      <li class="flex items-center gap-2">
+        {i > 0 && <span aria-hidden="true" class="text-faint">/</span>}
+        {c.path ? <a href={c.path} class="hover:text-ink">{c.name}</a> : <span aria-current="page" class="text-ink/80 truncate max-w-[16rem]">{c.name}</span>}
       </li>
     ))}
   </ol>

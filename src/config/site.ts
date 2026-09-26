@@ -20,7 +20,8 @@ export const ADSENSE_SLOTS = {
 };
 export const GA4_ID = clean(env.PUBLIC_GA4_ID); // e.g. G-XXXXXXXXXX
 export const CF_ANALYTICS_TOKEN = clean(env.PUBLIC_CF_ANALYTICS_TOKEN);
-export const INDEXNOW_KEY = clean(env.PUBLIC_INDEXNOW_KEY);
+// IndexNow keys are public by design (served at /{key}.txt).
+export const INDEXNOW_KEY = clean(env.PUBLIC_INDEXNOW_KEY) || '03dadaeb24b51e7d05988552784a5067';
 
 export const VERIFICATION = {
   google: clean(env.PUBLIC_GOOGLE_SITE_VERIFICATION),

@@ -19,6 +19,8 @@ export default {
     skip: 'মূল বিষয়বস্তুতে যান',
   },
   common: {
+    details: "বিস্তারিত",
+    swap: "অদলবদল",
     days: '{n} দিন',
     upToDays: 'সর্বোচ্চ {n} দিন',
     updated: 'তথ্য হালনাগাদ: {date}',

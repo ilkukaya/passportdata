@@ -56,30 +56,29 @@ Rota sayfaları İngilizcede tüm 199 pasaport için, diğer dillerde **o dili k
 - Affiliate kartları (SafetyWing, Airalo, otel, iVisa) sadece ID girilince görünür; `rel="sponsored"` ve açıklama metni otomatik.
 - Analitik: GA4 ve/veya Cloudflare Web Analytics (ikisi de ücretsiz).
 
+### Tasarım
+- Pasaport/seyahat belgesi temalı özgün arayüz: kâğıt dokulu zemin, pasaport laciverti, vize damgası kırmızısı ve pirinç sarısı; başlıklarda editoryal serif (Fraunces, 18 KB), gövdede sistem fontu.
+- İmza detaylar: pasaport sayfalarında makine okunur bölge (MRZ) satırı ve mühür şeklinde sıralama rozeti, rota sayfalarında biniş kartı (boarding pass) görünümü, her ülke için 198 hedefin dağılımını gösteren yığılmış çubuk.
+- "Pasaportum → Gideceğim ülke" denetleyicisi: cevabı sayfa yenilemeden anında gösterir, son seçilen pasaportu hatırlar, klavyeyle tam kullanılabilir.
+- Mobil öncelikli: yapışkan durum sekmeleri + anlık filtre, büyük dokunma alanları; otomatik koyu mod; Arapça/Urduca için tam RTL.
+
 ### Otomasyon
-- `update-data.yml`: her pazartesi veriyi günceller, değişiklik varsa commit'ler.
-- `build-deploy.yml`: main'e push, veri güncellemesi veya manuel tetiklemede build + Netlify deploy + (isteğe bağlı) IndexNow.
+- Netlify bu GitHub reposuna bağlıdır: varsayılan dala (`claude/passport-visa-platform-ad7Uv`) yapılan her push siteyi otomatik build edip yayınlar. Ek token/secret gerekmez.
+- `update-data.yml`: her pazartesi veriyi günceller, değişiklik varsa commit'ler (→ Netlify otomatik yayınlar) ve ardından IndexNow'a bildirir.
 
 ## 3. Senin yapman gerekenler (sırasıyla)
 
 > Tek ücretli (önerilen) kalem: **kendi alan adın** (~10 $/yıl). AdSense `*.netlify.app` gibi paylaşımlı alt alan adlarını pratikte onaylamaz; ads.txt kök alan adında olmalıdır.
 
-1. **Alan adı al** (ör. Cloudflare Registrar / Porkbun – maliyet fiyatına). Netlify → Domain management → alan adını ekle, HTTPS otomatik.
-2. **GitHub → Settings → Secrets and variables → Actions**
-   - *Secrets*: `NETLIFY_AUTH_TOKEN` (Netlify → User settings → Applications → Personal access token), `NETLIFY_SITE_ID` (Site configuration → Site ID).
-   - *Variables*: `SITE_URL=https://alanadin.com` ve aşağıdaki ID'ler (tam liste: `.env.example`).
-3. **Netlify'da çift build'i önle:** Site configuration → Build & deploy → *Stop builds* (deploy'u GitHub Actions yapıyor; Netlify build dakikası harcanmaz).
-4. **Google Search Console** → alan adı mülkü ekle → DNS TXT ile doğrula (veya `PUBLIC_GOOGLE_SITE_VERIFICATION`) → Sitemaps → `sitemap-index.xml` gönder.
-5. **Bing Webmaster Tools** → Search Console'dan içe aktar (1 tık) → sitemap gönder. `PUBLIC_INDEXNOW_KEY` için `openssl rand -hex 16` çıktısını değişken olarak ekle. (Bing = ChatGPT arama, Copilot, DuckDuckGo görünürlüğü.)
-6. **Yandex Webmaster** (Rusça/Türkçe trafik için) – isteğe bağlı.
-7. **Google Analytics 4** → ölçüm kimliği `PUBLIC_GA4_ID`. İsteğe bağlı: Cloudflare Web Analytics token'ı.
-8. **İletişim e-postası:** `PUBLIC_CONTACT_EMAIL` (ör. alan adında ücretsiz Cloudflare Email Routing ile `iletisim@alanadin.com`). AdSense iletişim bilgisi arar.
-9. **AdSense başvurusu** (site 2-4 hafta indekslendikten sonra):
-   - `PUBLIC_ADSENSE_CLIENT=ca-pub-…` ekle → deploy → AdSense'te siteyi ekle; `ads.txt` otomatik oluşur.
-   - AdSense → **Privacy & messaging → European regulations** mesajını oluştur ve yayınla (Google'ın ücretsiz sertifikalı CMP'si; AB trafiği için zorunlu).
-   - Onaydan sonra Ads → By ad unit → 3 adet "Display" birim oluştur → slot ID'lerini `PUBLIC_ADSENSE_SLOT_TOP / _IN_CONTENT / _BOTTOM` olarak ekle. (Alternatif: sadece Auto ads.)
-10. **Affiliate programları (ücretsiz):** SafetyWing Ambassador, Airalo Affiliate, Travelpayouts (Booking/otel, eSIM, sigorta hepsi tek panelde), iVisa Partner → linkleri değişkenlere ekle.
-11. GitHub → Actions → *Build & deploy* → Run workflow (`indexnow` işaretli) ile ilk yayını yap.
+1. **Alan adı al** (ör. Cloudflare Registrar / Porkbun – maliyet fiyatına). Netlify → Domain management → *Add a domain* → alan adını ekle, HTTPS otomatik gelir. Sonra Netlify → Site configuration → Environment variables → `SITE_URL` değerini `https://alanadin.com` yap ve yeniden deploy et (Deploys → Trigger deploy).
+2. **Google Search Console** (search.google.com/search-console) → *URL prefix* ile site adresini ekle → "HTML tag" yöntemindeki kodu Netlify'da `PUBLIC_GOOGLE_SITE_VERIFICATION` değişkenine yapıştır → yeniden deploy → Doğrula → Sitemaps bölümüne `sitemap-index.xml` yaz ve gönder.
+3. **Bing Webmaster Tools** → "Import from Google Search Console" (tek tık). Bing; ChatGPT arama, Copilot ve DuckDuckGo'yu besler. IndexNow anahtarı sitede zaten hazır (`/03dadaeb24b51e7d05988552784a5067.txt`).
+4. **Google Analytics 4** (isteğe bağlı) → ölçüm kimliğini (`G-…`) Netlify'da `PUBLIC_GA4_ID` olarak ekle.
+5. **İletişim e-postası:** Netlify'da `PUBLIC_CONTACT_EMAIL` ekle (alan adın olunca Cloudflare Email Routing ile ücretsiz `iletisim@alanadin.com`). AdSense iletişim bilgisi arar.
+6. **AdSense** (site 2-4 hafta indekslendikten sonra, kendi alan adınla): başvur → onaylanınca `PUBLIC_ADSENSE_CLIENT=ca-pub-…` ekle (ads.txt otomatik oluşur) → AdSense → Privacy & messaging → Avrupa mesajını yayınla → 3 reklam birimi oluşturup slot ID'lerini `PUBLIC_ADSENSE_SLOT_TOP`, `PUBLIC_ADSENSE_SLOT_IN_CONTENT`, `PUBLIC_ADSENSE_SLOT_BOTTOM` olarak ekle.
+7. **Affiliate programları (ücretsiz):** SafetyWing, Airalo, Travelpayouts, iVisa → linkleri `.env.example`'daki isimlerle Netlify'a ekle.
+
+> Netlify'da değişken eklemek: app.netlify.com → passportdata → Site configuration → Environment variables → Add a variable. Ekledikten sonra Deploys → Trigger deploy → Deploy site.
 
 ## 4. Sonraki adımlar (hepsi ücretsiz, önerilen sırayla)
 
@@ -95,7 +94,7 @@ Rota sayfaları İngilizcede tüm 199 pasaport için, diğer dillerde **o dili k
 - Seyahat/vize nişinde AdSense RPM tipik olarak **1-5 $** (Tier-1 İngilizce trafik daha yüksek, Hindistan/Pakistan/Bangladeş trafiği daha düşük). Asıl gelir potansiyeli **affiliate** (sigorta, eSIM, e-Vize servisleri) tarafındadır.
 - Yeni alan adında organik trafik genellikle **3-6 ayda** anlamlı seviyeye çıkar; düzenli veri güncellemesi ve backlink bu süreyi kısaltır.
 
-## 6. Yerel geliştirme
+## 6. Yerel geliştirme (teknik)
 
 ```bash
 npm ci

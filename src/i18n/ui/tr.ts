@@ -19,6 +19,8 @@ export default {
     skip: "İçeriğe geç",
   },
   common: {
+    details: "Ayrıntılar",
+    swap: "Yer değiştir",
     days: "{n} gün",
     upToDays: "{n} güne kadar",
     updated: "Veriler güncellendi: {date}",

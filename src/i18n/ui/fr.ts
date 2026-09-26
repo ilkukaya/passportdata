@@ -19,6 +19,8 @@ export default {
     skip: "Aller au contenu",
   },
   common: {
+    details: "Voir les détails",
+    swap: "Inverser",
     days: "{n} jours",
     upToDays: "jusqu'à {n} jours",
     updated: "Données mises à jour le {date}",

@@ -3,9 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Flag from '../../components/Flag.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import Icon from '../../components/Icon.astro';
 import { LANG_CODES, getUI, fmt, num, formatDate } from '../../i18n';
 import { SITE_URL } from '../../config/site';
-import { RANKING, DATA_UPDATED, countryName, passportPath, homePath, toolPath, alternatesFor, DESTINATION_COUNT } from '../../lib/data';
+import { RANKING, DATA_UPDATED, countryName, passportPath, homePath, toolPath, alternatesFor, DESTINATION_COUNT, continentOf } from '../../lib/data';
 import { webPage, breadcrumbList, dataset } from '../../lib/schema';
 
 export function getStaticPaths() {
@@ -44,50 +45,91 @@ const jsonLd = [
 
 <BaseLayout {lang} {title} {description} {path} alternates={alternatesFor((l) => toolPath(l, 'passport-ranking'))} {jsonLd}>
   <Breadcrumbs items={crumbs} />
-  <section class="wrap mt-4">
-    <h1 class="text-3xl md:text-4xl">{fmt(ui.ranking.h1, { year })}</h1>
-    <p class="mt-4 text-slate-700 max-w-3xl leading-relaxed" data-answer>{fmt(ui.ranking.intro, { date })}</p>
+  <section class="wrap mt-5">
+    <h1 class="text-3xl md:text-[2.6rem] leading-tight">{fmt(ui.ranking.h1, { year })}</h1>
+    <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ink/85" data-answer>{fmt(ui.ranking.intro, { date })}</p>
+    <ol class="mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
+      {RANKING.slice(0, 3).map((e, i) => (
+        <li class="bg-surface">
+          <a href={passportPath(lang, e.code)} class="flex items-center gap-4 p-5 hover:bg-sunken/50">
+            <span class="stamp h-12 w-12 shrink-0 text-sm font-bold"><span class="num">#{e.rank}</span></span>
+            <Flag code={e.code} size="md" />
+            <span class="min-w-0">
+              <span class="block truncate font-display text-lg font-semibold">{countryName(e.code, lang)}</span>
+              <span class="num text-sm text-muted">{num(lang, e.score)} / {DESTINATION_COUNT}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
   </section>
 
   <AdSlot slot="top" />
 
-  <section class="wrap mt-8">
-    <div class="card overflow-hidden">
-      <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
-          <tr>
-            <th scope="col" class="px-4 py-3 text-start w-16">{ui.common.rank}</th>
-            <th scope="col" class="px-4 py-3 text-start">{ui.common.passport}</th>
-            <th scope="col" class="px-4 py-3 text-start">{ui.ranking.score}</th>
-            <th scope="col" class="px-4 py-3 text-start hidden md:table-cell">{ui.ranking.breakdown}</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-          {RANKING.map((e) => (
-            <tr id={e.code.toLowerCase()} class="hover:bg-slate-50 scroll-mt-20">
-              <td class="px-4 py-2.5 font-bold text-slate-700">{e.rank}</td>
-              <td class="px-4 py-2.5">
-                <a href={passportPath(lang, e.code)} class="flex items-center gap-3 font-medium hover:text-indigo-700">
-                  <Flag code={e.code} /><span>{countryName(e.code, lang)}</span>
-                </a>
-              </td>
-              <td class="px-4 py-2.5">
-                <div class="flex items-center gap-3">
-                  <div class="hidden sm:block w-32 h-2 rounded-full bg-slate-100 overflow-hidden">
-                    <div class="h-full bg-indigo-600" style={`width:${Math.round((e.score / max) * 100)}%`}></div>
-                  </div>
-                  <span class="font-semibold">{num(lang, e.score)}<span class="text-slate-400 font-normal">/{DESTINATION_COUNT}</span></span>
-                </div>
-              </td>
-              <td class="px-4 py-2.5 hidden md:table-cell text-slate-600">
-                {num(lang, e.counts.visa_free)} / {num(lang, e.counts.visa_on_arrival)} / {num(lang, e.counts.eta)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  <section class="wrap mt-10" id="ranking">
+    <div class="sticky top-14 z-30 -mx-4 flex flex-col gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 md:flex-row md:items-center">
+      <label class="relative block md:w-72">
+        <span class="sr-only">{ui.common.filter}</span>
+        <Icon name="search" size={18} class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-faint" />
+        <input type="search" id="rank-filter" class="field !py-2 ps-10" placeholder={ui.common.filter} autocomplete="off" />
+      </label>
+      <div class="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1" role="group" aria-label={ui.common.region}>
+        <button type="button" class="chip region-btn !border-brand !bg-brand !text-brand-ink" data-region="">{ui.common.all}</button>
+        {(['EU', 'AS', 'AF', 'NA', 'SA', 'OC'] as const).map((r) => <button type="button" class="chip region-btn" data-region={r}>{ui.continents[r]}</button>)}
+      </div>
     </div>
+    <table class="mt-2 w-full text-sm">
+      <thead class="text-start text-xs text-muted">
+        <tr class="border-b border-line">
+          <th scope="col" class="w-12 py-3 text-start font-medium">{ui.common.rank}</th>
+          <th scope="col" class="py-3 text-start font-medium">{ui.common.passport}</th>
+          <th scope="col" class="py-3 text-start font-medium">{ui.ranking.score}</th>
+          <th scope="col" class="hidden py-3 text-end font-medium md:table-cell">{ui.ranking.breakdown}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {RANKING.map((e) => (
+          <tr id={e.code.toLowerCase()} class="rank-row scroll-mt-40 border-b border-line target:bg-brass/10" data-region={continentOf(e.code)} data-n={`${countryName(e.code, lang)} ${countryName(e.code, 'en')}`.toLowerCase()}>
+            <td class="num py-3 font-semibold text-muted">{e.rank}</td>
+            <td class="py-3">
+              <a href={passportPath(lang, e.code)} class="flex items-center gap-3 font-medium hover:text-brand"><Flag code={e.code} /><span>{countryName(e.code, lang)}</span></a>
+            </td>
+            <td class="py-3">
+              <div class="flex items-center gap-3">
+                <span class="num w-9 font-semibold">{num(lang, e.score)}</span>
+                <span class="hidden h-1.5 w-40 overflow-hidden rounded-full bg-sunken sm:flex">
+                  <span class="bar-visa_free h-full" style={`width:${(e.counts.visa_free / max) * 100}%`}></span>
+                  <span class="bar-visa_on_arrival h-full" style={`width:${(e.counts.visa_on_arrival / max) * 100}%`}></span>
+                  <span class="bar-eta h-full" style={`width:${(e.counts.eta / max) * 100}%`}></span>
+                </span>
+              </div>
+            </td>
+            <td class="num hidden py-3 text-end text-muted md:table-cell">{num(lang, e.counts.visa_free)} · {num(lang, e.counts.visa_on_arrival)} · {num(lang, e.counts.eta)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </section>
 
   <AdSlot slot="bottom" />
+
+  <script>
+    const input = document.getElementById('rank-filter') as HTMLInputElement;
+    const rows = [...document.querySelectorAll<HTMLElement>('.rank-row')];
+    const btns = [...document.querySelectorAll<HTMLButtonElement>('.region-btn')];
+    let region = '';
+    const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+    const apply = () => {
+      const q = norm(input.value.trim());
+      rows.forEach((r) => (r.hidden = !!(region && r.dataset.region !== region) || !!(q && !norm(r.dataset.n!).includes(q))));
+    };
+    input.addEventListener('input', apply);
+    btns.forEach((b) => b.addEventListener('click', () => {
+      region = b.dataset.region!;
+      btns.forEach((x) => x.classList.toggle('!bg-brand', x === b));
+      btns.forEach((x) => x.classList.toggle('!text-brand-ink', x === b));
+      btns.forEach((x) => x.classList.toggle('!border-brand', x === b));
+      apply();
+    }));
+  </script>
 </BaseLayout>

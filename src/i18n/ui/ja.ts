@@ -17,6 +17,8 @@ export default {
     skip: '本文へスキップ',
   },
   common: {
+    details: "詳細を見る",
+    swap: "入れ替え",
     days: '{n}日',
     upToDays: '最大{n}日',
     updated: 'データ更新日：{date}',

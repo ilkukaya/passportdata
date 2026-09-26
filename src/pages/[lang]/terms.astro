@@ -22,9 +22,9 @@ const POLICY_DATE = '2026-09-26';
 ---
 <BaseLayout {lang} title={`${doc.title} | PassportData`} description={doc.description} {path} alternates={alternatesFor((l) => toolPath(l, 'terms'))} {jsonLd}>
   <Breadcrumbs items={crumbs} />
-  <article class="wrap mt-4 max-w-3xl prose-text">
+  <article class="wrap mt-5 max-w-3xl prose-text">
     <h1 class="text-3xl md:text-4xl mb-2">{doc.h1}</h1>
-    {'updated' in doc && <p class="text-sm text-slate-500">{fmt((doc as any).updated, { date: formatDate(lang, POLICY_DATE) })}</p>}
+    {'updated' in doc && <p class="text-sm text-muted">{fmt((doc as any).updated, { date: formatDate(lang, POLICY_DATE) })}</p>}
     {doc.sections.map((s) => (<><h2>{s.h}</h2><p>{fmt(s.p, vars)}</p></>))}
   </article>
 </BaseLayout>

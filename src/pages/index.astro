@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CountrySearch from '../components/CountrySearch.astro';
+import TripChecker from '../components/TripChecker.astro';
 import { LANGUAGES, getUI } from '../i18n';
 import { SITE_URL } from '../config/site';
 import { homePath, alternatesFor } from '../lib/data';
@@ -12,22 +12,22 @@ const description = ui.meta.homeDescription;
 const jsonLd = [webPage({ url: `${SITE_URL}/`, name: title, description, lang: 'en' })];
 ---
 <BaseLayout lang="en" {title} {description} path="/" alternates={alternatesFor(homePath)} xDefault="/" {jsonLd}>
-  <section class="bg-gradient-to-br from-indigo-950 via-indigo-900 to-sky-900 text-white">
-    <div class="wrap py-14 md:py-20 text-center">
-      <h1 class="!text-white text-3xl md:text-5xl mb-4">{ui.home.h1}</h1>
-      <p class="text-indigo-100 text-lg max-w-2xl mx-auto mb-8">{ui.home.lead}</p>
-      <div class="max-w-xl mx-auto"><CountrySearch lang="en" dark placeholder={ui.common.selectPassport} /></div>
+  <section class="border-b border-line">
+    <div class="wrap max-w-4xl py-12 md:py-20">
+      <p class="eyebrow">{ui.meta.tagline}</p>
+      <h1 class="mt-4 text-[2.3rem] leading-[1.06] sm:text-5xl lg:text-[3.5rem]">{ui.home.h1}</h1>
+      <p class="mt-5 max-w-xl text-lg text-muted">{ui.home.lead}</p>
+      <div class="mt-8"><TripChecker lang="en" /></div>
     </div>
   </section>
-  <section class="wrap mt-12">
-    <h2 class="section-title text-center">{ui.landing.choose}</h2>
-    <p id="lang-suggest" class="hidden text-center mb-6"></p>
-    <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+  <section class="wrap max-w-4xl mt-12">
+    <h2 class="h-section">{ui.landing.choose}</h2>
+    <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
       {LANGUAGES.map((l) => (
-        <li>
+        <li class="bg-surface">
           <a href={homePath(l.code)} hreflang={l.hreflang} lang={l.hreflang} dir={l.dir} data-lang={l.code}
-             class="lang-card card block p-4 text-center font-semibold text-slate-800 hover:shadow-md hover:text-indigo-700 transition">
-            {l.name}
+             class="lang-card flex h-full items-center justify-between gap-2 px-4 py-4 font-medium hover:bg-sunken/60">
+            <span>{l.name}</span><span class="text-xs uppercase text-faint">{l.code}</span>
           </a>
         </li>
       ))}
@@ -39,15 +39,8 @@ const jsonLd = [webPage({ url: `${SITE_URL}/`, name: title, description, lang: '
   // Highlight (never force-redirect) the visitor's preferred language.
   const codes = [...document.querySelectorAll<HTMLAnchorElement>('.lang-card')].map((a) => a.dataset.lang!);
   const pref = (navigator.languages || [navigator.language]).map((l) => l.slice(0, 2).toLowerCase()).find((l) => codes.includes(l));
-  if (pref) {
+  if (pref && pref !== 'en') {
     const card = document.querySelector<HTMLAnchorElement>(`.lang-card[data-lang="${pref}"]`)!;
-    card.classList.add('ring-2', 'ring-indigo-500');
-    const hint = document.getElementById('lang-suggest')!;
-    const a = document.createElement('a');
-    a.href = card.href;
-    a.className = 'btn';
-    a.textContent = `${card.textContent!.trim()} →`;
-    hint.append(a);
-    hint.classList.remove('hidden');
+    card.classList.add('!bg-brand', '!text-brand-ink');
   }
 </script>

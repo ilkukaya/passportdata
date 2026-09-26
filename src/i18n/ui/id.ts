@@ -19,6 +19,8 @@ export default {
     skip: "Langsung ke konten",
   },
   common: {
+    details: "Lihat detail",
+    swap: "Tukar",
     days: "{n} hari",
     upToDays: "hingga {n} hari",
     updated: "Data diperbarui {date}",

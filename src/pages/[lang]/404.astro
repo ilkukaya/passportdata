@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import CountrySearch from '../../components/CountrySearch.astro';
+import TripChecker from '../../components/TripChecker.astro';
 import { LANG_CODES, getUI } from '../../i18n';
 import { homePath } from '../../lib/data';
 
@@ -11,11 +11,11 @@ const { lang } = Astro.params as { lang: string };
 const ui = getUI(lang);
 ---
 <BaseLayout {lang} title={`${ui.notFound.title} | PassportData`} description={ui.notFound.text} path={`/${lang}/404/`} noindex>
-  <section class="wrap py-16 text-center max-w-xl">
-    <p class="text-6xl font-bold text-indigo-200">404</p>
-    <h1 class="text-3xl mt-2">{ui.notFound.title}</h1>
-    <p class="mt-3 text-slate-600">{ui.notFound.text}</p>
-    <div class="mt-8 text-start"><CountrySearch {lang} /></div>
-    <a href={homePath(lang)} class="btn mt-8">{ui.notFound.home}</a>
+  <section class="wrap max-w-3xl py-16">
+    <p class="font-mono text-sm tracking-[0.2em] text-stamp">404</p>
+    <h1 class="mt-3 text-4xl">{ui.notFound.title}</h1>
+    <p class="mt-3 text-lg text-muted">{ui.notFound.text}</p>
+    <div class="mt-8"><TripChecker {lang} /></div>
+    <a href={homePath(lang)} class="link mt-8 inline-block font-semibold">{ui.notFound.home}</a>
   </section>
 </BaseLayout>

@@ -1,12 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import CountrySearch from '../../components/CountrySearch.astro';
+import TripChecker from '../../components/TripChecker.astro';
 import Flag from '../../components/Flag.astro';
+import Icon from '../../components/Icon.astro';
+import StatusBar from '../../components/StatusBar.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import { LANG_CODES, getUI, fmt, num, formatDate } from '../../i18n';
 import { POPULAR_DESTINATIONS, POPULAR_PASSPORTS, SITE_URL } from '../../config/site';
 import {
-  CODES, RANKING, DATA_UPDATED, countryName, passportPath, visitPath, homePath, toolPath, alternatesFor, sortByName, rankOf,
+  CODES, RANKING, DATA_UPDATED, countryName, passportPath, visitPath, homePath, toolPath, alternatesFor, sortByName,
+  inboundCounts,
 } from '../../lib/data';
 import { webPage, dataset } from '../../lib/schema';
 
@@ -20,74 +23,96 @@ const year = new Date().getUTCFullYear();
 const path = homePath(lang);
 const title = fmt(ui.meta.homeTitle, { year });
 const description = ui.meta.homeDescription;
+const date = formatDate(lang, DATA_UPDATED);
 const top = RANKING.slice(0, 10);
+const leader = RANKING[0];
+const max = leader.score;
 const tools = [
-  { href: toolPath(lang, 'passport-ranking'), title: ui.nav.ranking, text: ui.home.rankingCard, icon: '🏆' },
-  { href: toolPath(lang, 'compare'), title: ui.nav.compare, text: ui.home.compareCard, icon: '⚖️' },
-  { href: toolPath(lang, 'schengen-calculator'), title: ui.nav.schengen, text: ui.home.schengenCard, icon: '🗓️' },
+  { href: toolPath(lang, 'passport-ranking'), title: ui.nav.ranking, text: ui.home.rankingCard, icon: 'chart' },
+  { href: toolPath(lang, 'compare'), title: ui.nav.compare, text: ui.home.compareCard, icon: 'scale' },
+  { href: toolPath(lang, 'schengen-calculator'), title: ui.nav.schengen, text: ui.home.schengenCard, icon: 'calendar' },
 ];
 const jsonLd = [
   webPage({ url: `${SITE_URL}${path}`, name: title, description, lang }),
   dataset(lang, 'PassportData – global visa requirements', ui.home.aboutText),
 ];
+const pad = (n: number) => String(n).padStart(3, '0');
+const mrz = `P<${leader.code}<<VISA<FREE<${pad(leader.counts.visa_free)}<<VOA<${pad(leader.counts.visa_on_arrival)}<<ETA<${pad(leader.counts.eta)}<<<<<<<<<<<<<<<<<<<<`;
 ---
 
 <BaseLayout {lang} {title} {description} {path} alternates={alternatesFor(homePath)} xDefault="/" {jsonLd}>
-  <section class="bg-gradient-to-br from-indigo-950 via-indigo-900 to-sky-900 text-white">
-    <div class="wrap py-14 md:py-20 text-center">
-      <h1 class="!text-white text-3xl md:text-5xl mb-4">{ui.home.h1}</h1>
-      <p class="text-indigo-100 text-lg max-w-2xl mx-auto mb-8">{ui.home.lead}</p>
-      <div class="max-w-xl mx-auto"><CountrySearch {lang} dark placeholder={ui.common.selectPassport} /></div>
-      <dl class="mt-10 flex justify-center gap-8 md:gap-14 text-indigo-100">
-        <div class="flex flex-col-reverse"><dt class="text-sm">{ui.home.statPassports}</dt><dd class="text-2xl font-bold text-white">{num(lang, CODES.length)}</dd></div>
-        <div class="flex flex-col-reverse"><dt class="text-sm">{ui.home.statRoutes}</dt><dd class="text-2xl font-bold text-white">{num(lang, CODES.length * (CODES.length - 1))}</dd></div>
-        <div class="flex flex-col-reverse"><dt class="text-sm">{ui.home.statLanguages}</dt><dd class="text-2xl font-bold text-white">{num(lang, LANG_CODES.length)}</dd></div>
-      </dl>
-      <p class="mt-6 text-xs text-indigo-200">{fmt(ui.common.updated, { date: formatDate(lang, DATA_UPDATED) })}</p>
-    </div>
-  </section>
+  <section class="border-b border-line">
+    <div class="wrap grid gap-12 py-10 md:py-16 lg:grid-cols-[1.25fr_1fr] lg:items-center">
+      <div>
+        <p class="eyebrow">{num(lang, CODES.length)} {ui.home.statPassports} · {num(lang, CODES.length * (CODES.length - 1))} {ui.home.statRoutes} · {num(lang, LANG_CODES.length)} {ui.home.statLanguages}</p>
+        <h1 class="mt-4 text-[2.3rem] leading-[1.06] sm:text-5xl lg:text-[3.5rem]">{ui.home.h1}</h1>
+        <p class="mt-5 max-w-xl text-lg text-muted">{ui.home.lead}</p>
+        <div class="mt-8"><TripChecker {lang} /></div>
+        <div class="mt-7">
+          <p class="eyebrow mb-2.5">{ui.common.popularPassports}</p>
+          <ul class="flex flex-wrap gap-2">
+            {POPULAR_PASSPORTS.slice(0, 10).map((code) => (
+              <li><a href={passportPath(lang, code)} class="chip"><Flag code={code} />{countryName(code, lang)}</a></li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
-  <section class="wrap mt-12">
-    <h2 class="section-title">{ui.common.popularPassports}</h2>
-    <ul class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-      {POPULAR_PASSPORTS.map((code) => (
-        <li>
-          <a href={passportPath(lang, code)} class="card flex flex-col items-center gap-2 p-4 text-center hover:shadow-md transition-shadow h-full">
-            <Flag code={code} size="md" />
-            <span class="text-sm font-semibold text-slate-800">{countryName(code, lang)}</span>
-            <span class="text-xs text-slate-500">#{rankOf(code).rank} · {num(lang, rankOf(code).score)}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
+      <a href={passportPath(lang, leader.code)} class="group relative hidden overflow-hidden rounded-xl border border-line bg-surface shadow-lift lg:block">
+        <div class="flex items-center justify-between bg-brand px-6 py-3 text-brand-ink">
+          <span class="text-[0.72rem] font-semibold uppercase tracking-[0.14em] opacity-80">{ui.home.strongest}</span>
+          <Icon name="passport" size={18} class="opacity-80" />
+        </div>
+        <div class="grid grid-cols-[auto_1fr] gap-6 p-6">
+          <Flag code={leader.code} size="xl" eager />
+          <div>
+            <p class="eyebrow">{ui.common.passport}</p>
+            <p class="font-display text-3xl font-semibold group-hover:text-brand">{countryName(leader.code, lang)}</p>
+            <p class="mt-3 eyebrow">{ui.passport.mobilityScore}</p>
+            <p class="num text-4xl font-semibold">{num(lang, leader.score)}<span class="text-lg text-faint">/{num(lang, CODES.length - 1)}</span></p>
+          </div>
+        </div>
+        <div class="px-6 pb-5"><StatusBar {lang} counts={leader.counts} links={false} /></div>
+        <p class="mrz border-t border-line bg-sunken/60 px-6 py-3" aria-hidden="true">{mrz}</p>
+        <span class="stamp absolute end-6 top-16 h-[4.5rem] w-[4.5rem] text-center text-[0.6rem] font-bold uppercase leading-tight">
+          <span>{ui.common.rank}<br /><span class="num text-xl">#1</span></span>
+        </span>
+      </a>
+    </div>
   </section>
 
   <AdSlot slot="top" />
 
-  <section class="wrap mt-12 grid gap-8 lg:grid-cols-2">
+  <section class="wrap mt-14 grid gap-14 lg:grid-cols-[1.2fr_1fr]">
     <div>
-      <h2 class="section-title">{ui.home.strongest}</h2>
-      <ol class="card divide-y divide-slate-100">
+      <div class="flex items-baseline justify-between gap-4">
+        <h2 class="h-section">{ui.home.strongest}</h2>
+        <a href={toolPath(lang, 'passport-ranking')} class="link text-sm font-semibold whitespace-nowrap">{ui.common.viewAll}</a>
+      </div>
+      <ol class="border-t border-line">
         {top.map((e) => (
           <li>
-            <a href={passportPath(lang, e.code)} class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50">
-              <span class="w-8 text-slate-500 font-semibold">#{e.rank}</span>
+            <a href={passportPath(lang, e.code)} class="grid grid-cols-[1.75rem_auto_1fr_auto] items-center gap-3 border-b border-line py-3 hover:text-brand">
+              <span class="num text-sm text-faint">{e.rank}</span>
               <Flag code={e.code} />
-              <span class="flex-1 font-medium">{countryName(e.code, lang)}</span>
-              <span class="text-sm font-semibold text-indigo-700">{num(lang, e.score)}</span>
+              <span class="min-w-0">
+                <span class="block truncate font-medium">{countryName(e.code, lang)}</span>
+                <span class="mt-1.5 block h-1 rounded-full bg-sunken"><span class="block h-full rounded-full bg-brand/70" style={`width:${(e.score / max) * 100}%`}></span></span>
+              </span>
+              <span class="num text-sm font-semibold">{num(lang, e.score)}</span>
             </a>
           </li>
         ))}
       </ol>
-      <a href={toolPath(lang, 'passport-ranking')} class="inline-block mt-3 text-sm font-semibold text-indigo-700 hover:underline">{ui.common.viewAll} →</a>
     </div>
     <div>
-      <h2 class="section-title">{ui.home.popularDestinations}</h2>
-      <ul class="grid grid-cols-2 gap-2">
+      <h2 class="h-section">{ui.home.popularDestinations}</h2>
+      <ul class="grid grid-cols-2 gap-x-6 border-t border-line">
         {POPULAR_DESTINATIONS.slice(0, 20).map((code) => (
           <li>
-            <a href={visitPath(lang, code)} class="tile-sm">
-              <Flag code={code} /><span class="truncate text-sm font-medium">{countryName(code, lang)}</span>
+            <a href={visitPath(lang, code)} class="crow">
+              <Flag code={code} /><span class="cname text-sm">{countryName(code, lang)}</span>
+              <span class="cmeta" title={ui.passport.mobilityHint}>{num(lang, inboundCounts(code).open)}</span>
             </a>
           </li>
         ))}
@@ -95,31 +120,35 @@ const jsonLd = [
     </div>
   </section>
 
-  <section class="wrap mt-12">
-    <h2 class="section-title">{ui.home.tools}</h2>
-    <div class="grid gap-4 md:grid-cols-3">
+  <section class="wrap mt-16">
+    <h2 class="h-section">{ui.home.tools}</h2>
+    <div class="grid gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-3">
       {tools.map((t) => (
-        <a href={t.href} class="card p-6 hover:shadow-md transition-shadow">
-          <span class="text-3xl" aria-hidden="true">{t.icon}</span>
-          <h3 class="mt-3 text-lg">{t.title}</h3>
-          <p class="text-slate-600 text-sm mt-1">{t.text}</p>
+        <a href={t.href} class="group flex flex-col gap-3 bg-surface p-6 hover:bg-sunken/50">
+          <Icon name={t.icon} size={26} class="text-brass" />
+          <h3 class="text-xl group-hover:text-brand">{t.title}</h3>
+          <p class="text-sm text-muted">{t.text}</p>
+          <Icon name="arrow" size={18} class="mt-auto text-faint group-hover:text-brand rtl:rotate-180" />
         </a>
       ))}
     </div>
   </section>
 
-  <section class="wrap mt-12">
-    <div class="card p-6 md:p-8">
-      <h2 class="section-title">{ui.home.aboutTitle}</h2>
-      <p class="text-slate-700 leading-relaxed max-w-4xl">{ui.home.aboutText}</p>
+  <section class="wrap mt-16 grid gap-6 md:grid-cols-[1fr_2fr] md:gap-12">
+    <h2 class="h-section">{ui.home.aboutTitle}</h2>
+    <div class="text-ink/85 leading-relaxed">
+      <p>{ui.home.aboutText}</p>
+      <p class="mt-4 text-sm text-muted">{fmt(ui.common.updated, { date })} · <a class="link" href={toolPath(lang, 'about')}>{ui.footer.about}</a></p>
     </div>
   </section>
 
-  <section class="wrap mt-12">
-    <h2 class="section-title">{ui.common.allPassports}</h2>
-    <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-1 text-sm">
+  <section class="wrap mt-16">
+    <h2 class="h-section">{ui.common.allPassports}</h2>
+    <ul class="columns-2 gap-8 text-sm sm:columns-3 lg:columns-5">
       {sortByName(CODES, lang).map((code) => (
-        <li><a href={passportPath(lang, code)} class="flex items-center gap-2 py-1.5 hover:text-indigo-700"><Flag code={code} /><span class="truncate">{countryName(code, lang)}</span></a></li>
+        <li class="break-inside-avoid">
+          <a href={passportPath(lang, code)} class="flex items-center gap-2 py-1.5 text-ink/85 hover:text-brand"><Flag code={code} /><span class="truncate">{countryName(code, lang)}</span></a>
+        </li>
       ))}
     </ul>
   </section>

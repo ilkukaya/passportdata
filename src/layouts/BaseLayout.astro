@@ -6,6 +6,7 @@ import {
 } from '../config/site';
 import { DATA_UPDATED, homePath, toolPath } from '../lib/data';
 import { baseGraph } from '../lib/schema';
+import Icon from '../components/Icon.astro';
 
 interface Props {
   lang: string;
@@ -77,7 +78,8 @@ const nav = [
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#312e81" />
+    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e1219" media="(prefers-color-scheme: dark)" />
     <link rel="alternate" type="text/plain" title="LLM summary" href="/llms.txt" />
     {VERIFICATION.google && <meta name="google-site-verification" content={VERIFICATION.google} />}
     {VERIFICATION.bing && <meta name="msvalidate.01" content={VERIFICATION.bing} />}
@@ -97,43 +99,39 @@ const nav = [
       <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: CF_ANALYTICS_TOKEN })} />
     )}
   </head>
-  <body class="min-h-screen bg-slate-50 text-slate-800 antialiased flex flex-col">
-    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 bg-white px-3 py-2 rounded shadow z-50">{ui.nav.skip}</a>
-    <header class="bg-white/95 backdrop-blur border-b border-slate-200 sticky top-0 z-40">
-      <div class="wrap flex items-center justify-between gap-3 h-14">
-        <a href={homePath(lang)} class="flex items-center gap-2 font-bold text-lg text-indigo-800 shrink-0" aria-label={SITE_NAME}>
-          <img src="/favicon.svg" alt="" width="28" height="28" />
-          <span>{SITE_NAME}</span>
+  <body class="min-h-screen flex flex-col bg-paper text-ink antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:start-3 focus:top-3 z-50 rounded bg-surface px-3 py-2 shadow-lift">{ui.nav.skip}</a>
+    <header class="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur supports-[backdrop-filter]:bg-paper/75">
+      <div class="wrap flex h-14 items-center gap-6">
+        <a href={homePath(lang)} class="flex items-center gap-2.5 shrink-0" aria-label={SITE_NAME}>
+          <img src="/favicon.svg" alt="" width="26" height="26" />
+          <span class="font-display text-[1.2rem] font-semibold tracking-tight">Passport<span class="text-brass">Data</span></span>
         </a>
-        <nav class="hidden md:flex items-center gap-5 text-sm font-medium" aria-label={ui.nav.menu}>
-          {nav.map((n) => <a href={n.href} class="text-slate-600 hover:text-indigo-700">{n.label}</a>)}
+        <nav class="hidden md:flex items-center gap-1 text-sm" aria-label={ui.nav.menu}>
+          {nav.map((n) => (
+            <a href={n.href} class:list={['rounded-md px-3 py-2 text-muted hover:bg-sunken hover:text-ink', path === n.href && '!text-ink font-semibold']}>{n.label}</a>
+          ))}
         </nav>
-        <div class="flex items-center gap-2">
+        <div class="ms-auto flex items-center gap-1">
           <details class="dropdown relative">
-            <summary class="btn-ghost" aria-label={ui.nav.language}>
-              <svg aria-hidden="true" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-              <span class="uppercase text-xs font-semibold">{lang}</span>
+            <summary class="btn-quiet" aria-label={ui.nav.language}>
+              <Icon name="globe" size={18} />
+              <span class="hidden text-sm font-medium sm:inline">{info.name}</span><span class="text-xs font-semibold uppercase sm:hidden">{lang}</span>
             </summary>
-            <ul class="dropdown-menu end-0 w-48 max-h-[70vh] overflow-y-auto">
+            <ul class="menu end-0 w-52 max-h-[70vh] overflow-y-auto">
               {LANGUAGES.map((l) => (
                 <li>
-                  <a
-                    href={langLinks[l.code] ?? alternates[l.code] ?? homePath(l.code)}
-                    hreflang={l.hreflang}
-                    lang={l.hreflang}
-                    class:list={['mlink', l.code === lang && 'font-semibold text-indigo-700']}
-                  >
-                    {l.name}
+                  <a href={langLinks[l.code] ?? alternates[l.code] ?? homePath(l.code)} hreflang={l.hreflang} lang={l.hreflang}
+                     class:list={['mlink flex justify-between', l.code === lang && 'font-semibold text-brand']}>
+                    <span>{l.name}</span><span class="text-xs uppercase text-faint">{l.code}</span>
                   </a>
                 </li>
               ))}
             </ul>
           </details>
           <details class="dropdown relative md:hidden">
-            <summary class="btn-ghost" aria-label={ui.nav.menu}>
-              <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </summary>
-            <ul class="dropdown-menu end-0 w-60">
+            <summary class="btn-quiet" aria-label={ui.nav.menu}><Icon name="menu" size={20} /></summary>
+            <ul class="menu end-0 w-64">
               {nav.map((n) => <li><a href={n.href} class="mlink">{n.label}</a></li>)}
             </ul>
           </details>
@@ -141,30 +139,38 @@ const nav = [
       </div>
     </header>
 
-    <main id="main" class="flex-1">
+    <main id="main" class="flex-1 pb-8">
       <slot />
     </main>
 
-    <footer class="bg-slate-900 text-slate-400 text-sm mt-16">
-      <div class="wrap py-10 grid gap-8 md:grid-cols-3">
+    <footer class="mt-20 border-t border-line bg-sunken/50 text-sm">
+      <div class="wrap grid gap-10 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p class="text-white font-bold text-base mb-2">{SITE_NAME}</p>
-          <p>{ui.meta.tagline}</p>
-          <p class="mt-3">{fmt(ui.footer.dataNote, { date: formatDate(lang, DATA_UPDATED) })}</p>
+          <p class="flex items-center gap-2.5">
+            <img src="/favicon.svg" alt="" width="26" height="26" loading="lazy" />
+            <span class="font-display text-lg font-semibold">Passport<span class="text-brass">Data</span></span>
+          </p>
+          <p class="mt-3 max-w-sm text-muted">{ui.meta.tagline}. {fmt(ui.footer.dataNote, { date: formatDate(lang, DATA_UPDATED) })}</p>
         </div>
-        <ul class="space-y-2">
-          {nav.map((n) => <li><a href={n.href} class="hover:text-white">{n.label}</a></li>)}
-          <li><a href={toolPath(lang, 'about')} class="hover:text-white">{ui.footer.about}</a></li>
-          <li><a href={toolPath(lang, 'privacy')} class="hover:text-white">{ui.footer.privacy}</a></li>
-          <li><a href={toolPath(lang, 'terms')} class="hover:text-white">{ui.footer.terms}</a></li>
-          <li><a href="/api/v1/visa-requirements.json" class="hover:text-white">{ui.footer.data}</a></li>
-        </ul>
-        <ul class="flex flex-wrap gap-x-3 gap-y-1 content-start" aria-label={ui.nav.language}>
-          {LANGUAGES.map((l) => <li><a href={homePath(l.code)} hreflang={l.hreflang} lang={l.hreflang} class="hover:text-white">{l.name}</a></li>)}
-        </ul>
+        <div>
+          <p class="eyebrow mb-3">{SITE_NAME}</p>
+          <ul class="space-y-2">
+            {nav.map((n) => <li><a href={n.href} class="text-ink/80 hover:text-ink">{n.label}</a></li>)}
+            <li><a href={toolPath(lang, 'about')} class="text-ink/80 hover:text-ink">{ui.footer.about}</a></li>
+            <li><a href={toolPath(lang, 'privacy')} class="text-ink/80 hover:text-ink">{ui.footer.privacy}</a></li>
+            <li><a href={toolPath(lang, 'terms')} class="text-ink/80 hover:text-ink">{ui.footer.terms}</a></li>
+            <li><a href="/api/v1/visa-requirements.json" class="text-ink/80 hover:text-ink">{ui.footer.data}</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="eyebrow mb-3">{ui.nav.language}</p>
+          <ul class="grid grid-cols-2 gap-x-4 gap-y-2">
+            {LANGUAGES.map((l) => <li><a href={homePath(l.code)} hreflang={l.hreflang} lang={l.hreflang} class="text-ink/80 hover:text-ink">{l.name}</a></li>)}
+          </ul>
+        </div>
       </div>
-      <div class="border-t border-slate-800">
-        <div class="wrap py-5 text-xs space-y-1.5">
+      <div class="border-t border-line">
+        <div class="wrap space-y-1.5 py-6 text-xs text-muted">
           <p>{ui.footer.disclaimer}</p>
           {hasAffiliates && <p>{ui.footer.affiliate}</p>}
           <p>{fmt(ui.footer.rights, { year })}</p>

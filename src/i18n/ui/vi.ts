@@ -19,6 +19,8 @@ export default {
     skip: "Chuyển đến nội dung",
   },
   common: {
+    details: "Xem chi tiết",
+    swap: "Đổi chỗ",
     days: "{n} ngày",
     upToDays: "tối đa {n} ngày",
     updated: "Dữ liệu cập nhật ngày {date}",

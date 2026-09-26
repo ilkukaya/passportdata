@@ -17,6 +17,8 @@ export default {
     skip: '跳至正文',
   },
   common: {
+    details: "查看详情",
+    swap: "交换",
     days: '{n}天',
     upToDays: '最长{n}天',
     updated: '数据更新于{date}',

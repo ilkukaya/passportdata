@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const PUBLIC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public');
 const adsClient = (process.env.PUBLIC_ADSENSE_CLIENT || '').trim();
-const indexNowKey = (process.env.PUBLIC_INDEXNOW_KEY || '').trim();
+const indexNowKey = (process.env.PUBLIC_INDEXNOW_KEY || '03dadaeb24b51e7d05988552784a5067').trim();
 
 // ads.txt – required by AdSense. "ca-pub-123" → "pub-123".
 const adsTxt = path.join(PUBLIC, 'ads.txt');

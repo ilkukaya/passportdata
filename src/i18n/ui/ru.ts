@@ -21,6 +21,8 @@ export default {
     skip: 'Перейти к содержанию',
   },
   common: {
+    details: "Подробнее",
+    swap: "Поменять местами",
     days: '{n} дн.',
     upToDays: 'до {n} дн.',
     updated: 'Данные обновлены: {date}',

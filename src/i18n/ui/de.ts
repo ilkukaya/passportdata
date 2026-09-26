@@ -19,6 +19,8 @@ export default {
     skip: "Zum Inhalt springen",
   },
   common: {
+    details: "Details",
+    swap: "Tauschen",
     days: "{n} Tage",
     upToDays: "bis zu {n} Tage",
     updated: "Datenstand: {date}",

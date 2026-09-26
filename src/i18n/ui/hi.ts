@@ -19,6 +19,8 @@ export default {
     skip: 'मुख्य सामग्री पर जाएँ',
   },
   common: {
+    details: "विवरण देखें",
+    swap: "अदला-बदली करें",
     days: '{n} दिन',
     upToDays: '{n} दिन तक',
     updated: 'डेटा अपडेट: {date}',

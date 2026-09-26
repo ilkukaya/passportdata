@@ -4,8 +4,11 @@ interface Props { slot: keyof typeof ADSENSE_SLOTS }
 const id = ADSENSE_SLOTS[Astro.props.slot];
 ---
 {ADSENSE_CLIENT && id && (
-  <div class="wrap my-8 min-h-[100px]" aria-hidden="true">
-    <ins class="adsbygoogle block" style="display:block" data-ad-client={ADSENSE_CLIENT} data-ad-slot={id} data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <aside class="wrap my-10" aria-label="Advertisement">
+    <p class="eyebrow mb-2 text-center">Advertisement</p>
+    <div class="min-h-[100px]">
+      <ins class="adsbygoogle" style="display:block" data-ad-client={ADSENSE_CLIENT} data-ad-slot={id} data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
     <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
+  </aside>
 )}
