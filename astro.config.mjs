@@ -1,17 +1,13 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+
+const site = (process.env.SITE_URL || 'https://passportdata.netlify.app').replace(/\/$/, '');
+
 export default defineConfig({
-  integrations: [tailwind()],
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'tr', 'es', 'ar', 'pt', 'fr'],
-    routing: {
-      prefixDefaultLocale: true
-    }
-  },
+  site,
   output: 'static',
-  site: 'https://passportdata.netlify.app',
-  build: {
-    format: 'directory'
-  }
+  trailingSlash: 'always',
+  build: { format: 'directory', inlineStylesheets: 'never' },
+  integrations: [tailwind({ applyBaseStyles: false })],
+  vite: { build: { chunkSizeWarningLimit: 2000 } },
 });

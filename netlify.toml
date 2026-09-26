@@ -1,27 +1,118 @@
 [build]
+  command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  NODE_VERSION = "20"
+  NODE_OPTIONS = "--max-old-space-size=6144"
+
+# --- Security headers -------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# --- Caching ----------------------------------------------------------------
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/flags/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=3600"
+
+# --- Legacy URLs (v1 of the site) --------------------------------------------
 [[redirects]]
-  from = "/tr"
-  to = "/tr/"
+  from = "/:lang/:country/visa-free-countries/*"
+  to = "/:lang/:country/#visa_free"
+  status = 301
+[[redirects]]
+  from = "/:lang/:country/visa-on-arrival/*"
+  to = "/:lang/:country/#visa_on_arrival"
+  status = 301
+[[redirects]]
+  from = "/:lang/:country/e-visa/*"
+  to = "/:lang/:country/#e_visa"
+  status = 301
+[[redirects]]
+  from = "/:lang/:country/visa-required/*"
+  to = "/:lang/:country/#visa_required"
+  status = 301
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap-index.xml"
   status = 301
 
+# --- Language-specific 404 pages ---------------------------------------------
 [[redirects]]
-  from = "/es"
-  to = "/es/"
-  status = 301
-
+  from = "/en/*"
+  to = "/en/404/"
+  status = 404
 [[redirects]]
-  from = "/ar"
-  to = "/ar/"
-  status = 301
-
+  from = "/zh/*"
+  to = "/zh/404/"
+  status = 404
 [[redirects]]
-  from = "/pt"
-  to = "/pt/"
-  status = 301
-
+  from = "/hi/*"
+  to = "/hi/404/"
+  status = 404
 [[redirects]]
-  from = "/fr"
-  to = "/fr/"
-  status = 301
+  from = "/es/*"
+  to = "/es/404/"
+  status = 404
+[[redirects]]
+  from = "/ar/*"
+  to = "/ar/404/"
+  status = 404
+[[redirects]]
+  from = "/fr/*"
+  to = "/fr/404/"
+  status = 404
+[[redirects]]
+  from = "/bn/*"
+  to = "/bn/404/"
+  status = 404
+[[redirects]]
+  from = "/pt/*"
+  to = "/pt/404/"
+  status = 404
+[[redirects]]
+  from = "/ru/*"
+  to = "/ru/404/"
+  status = 404
+[[redirects]]
+  from = "/ur/*"
+  to = "/ur/404/"
+  status = 404
+[[redirects]]
+  from = "/id/*"
+  to = "/id/404/"
+  status = 404
+[[redirects]]
+  from = "/de/*"
+  to = "/de/404/"
+  status = 404
+[[redirects]]
+  from = "/ja/*"
+  to = "/ja/404/"
+  status = 404
+[[redirects]]
+  from = "/tr/*"
+  to = "/tr/404/"
+  status = 404
+[[redirects]]
+  from = "/vi/*"
+  to = "/vi/404/"
+  status = 404

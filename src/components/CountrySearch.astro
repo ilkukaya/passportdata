@@ -1,0 +1,75 @@
+---
+import { getUI } from '../i18n';
+import { CODES, countryName, passportPath } from '../lib/data';
+interface Props { lang: string; dark?: boolean; buildHref?: (code: string) => string; placeholder?: string }
+const { lang, dark = false, buildHref = (c: string) => passportPath(lang, c), placeholder } = Astro.props;
+const ui = getUI(lang);
+const items = CODES.map((c) => ({ c, n: countryName(c, lang), a: countryName(c, 'en'), u: buildHref(c) }));
+---
+<div class="country-search relative" data-lang={lang}>
+  <label class="sr-only" for={`cs-${lang}`}>{ui.common.selectPassport}</label>
+  <input
+    id={`cs-${lang}`}
+    type="search"
+    role="combobox"
+    aria-expanded="false"
+    aria-autocomplete="list"
+    autocomplete="off"
+    placeholder={placeholder ?? ui.common.searchCountry}
+    class:list={['input text-lg', dark && 'bg-white/95']}
+  />
+  <ul role="listbox" class="cs-results hidden absolute inset-x-0 z-30 mt-2 max-h-80 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 text-start shadow-xl"></ul>
+  <script type="application/json" class="cs-data" set:html={JSON.stringify(items)} />
+</div>
+
+<script>
+  type Item = { c: string; n: string; a: string; u: string };
+  const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+  document.querySelectorAll<HTMLElement>('.country-search').forEach((root) => {
+    const input = root.querySelector('input')!;
+    const list = root.querySelector<HTMLUListElement>('.cs-results')!;
+    const items: Item[] = JSON.parse(root.querySelector('.cs-data')!.textContent || '[]');
+    const index = items.map((it) => ({ it, key: norm(`${it.n} ${it.a} ${it.c}`) }));
+    let active = -1;
+    const close = () => { list.classList.add('hidden'); input.setAttribute('aria-expanded', 'false'); active = -1; };
+    const render = () => {
+      const q = norm(input.value.trim());
+      if (!q) return close();
+      const hits = index.filter((x) => x.key.includes(q)).slice(0, 8);
+      list.replaceChildren(...hits.map(({ it }) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        const a = document.createElement('a');
+        a.href = it.u;
+        a.className = 'flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-indigo-50 text-slate-800';
+        const img = document.createElement('img');
+        img.src = `/flags/${it.c.toLowerCase()}.svg`; img.width = 24; img.height = 16; img.alt = ''; img.className = 'flag';
+        a.append(img, document.createTextNode(it.n));
+        li.append(a);
+        return li;
+      }));
+      if (!hits.length) {
+        const li = document.createElement('li');
+        li.className = 'px-3 py-2 text-slate-500';
+        li.textContent = '—';
+        list.append(li);
+      }
+      list.classList.remove('hidden');
+      input.setAttribute('aria-expanded', 'true');
+      active = -1;
+    };
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', (e) => {
+      const links = [...list.querySelectorAll<HTMLAnchorElement>('a')];
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        active = (active + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % Math.max(links.length, 1);
+        links.forEach((l, i) => l.classList.toggle('bg-indigo-50', i === active));
+      } else if (e.key === 'Enter') {
+        const target = links[active] ?? links[0];
+        if (target) { e.preventDefault(); location.href = target.href; }
+      } else if (e.key === 'Escape') close();
+    });
+    document.addEventListener('click', (e) => { if (!root.contains(e.target as Node)) close(); });
+  });
+</script>

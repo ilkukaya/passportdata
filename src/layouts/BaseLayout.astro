@@ -1,85 +1,175 @@
 ---
-import SEOHead from '../components/SEOHead.astro';
-import LanguageSwitcher from '../components/LanguageSwitcher.astro';
-import { useTranslations, isRTL, type Lang } from '../utils/i18n';
 import '../styles/global.css';
+import { LANGUAGES, getUI, fmt, formatDate, langInfo } from '../i18n';
+import {
+  SITE_NAME, SITE_URL, ADSENSE_CLIENT, GA4_ID, CF_ANALYTICS_TOKEN, VERIFICATION, AFFILIATES,
+} from '../config/site';
+import { DATA_UPDATED, homePath, toolPath } from '../lib/data';
+import { baseGraph } from '../lib/schema';
 
 interface Props {
+  lang: string;
   title: string;
   description: string;
-  lang: string;
-  alternateLinks?: Record<string, string>;
-  rtl?: boolean;
+  path: string;
+  /** Equivalent pages in other languages (used for hreflang). */
+  alternates?: Record<string, string>;
+  /** Where the language switcher should point (defaults to alternates, then each language's home page). */
+  langLinks?: Record<string, string>;
+  xDefault?: string;
+  jsonLd?: object[];
+  noindex?: boolean;
+  ogType?: string;
 }
 
-const { title, description, lang, alternateLinks, rtl } = Astro.props;
-const t = useTranslations(lang as Lang);
-const dir = rtl || isRTL(lang as Lang) ? 'rtl' : 'ltr';
-const currentYear = new Date().getFullYear();
+const { lang, title, description, path, alternates = {}, langLinks = {}, xDefault, jsonLd = [], noindex = false, ogType = 'website' } =
+  Astro.props;
+const ui = getUI(lang);
+const info = langInfo(lang);
+const canonical = `${SITE_URL}${path}`;
+const ogImage = `${SITE_URL}/og/${lang}.png`;
+const defaultHref = xDefault ?? alternates.en;
+const graph = { '@context': 'https://schema.org', '@graph': [...baseGraph(lang, ui.meta.tagline), ...jsonLd] };
+const year = new Date().getUTCFullYear();
+const hasAffiliates = Object.values(AFFILIATES).some(Boolean);
+const EEA = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO','SK','SI','ES','SE','GB','CH'];
+const consentScript = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500,region:${JSON.stringify(EEA)}});
+gtag('consent','default',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});
+gtag('set','ads_data_redaction',true);gtag('js',new Date());${GA4_ID ? `gtag('config','${GA4_ID}');` : ''}`;
+const nav = [
+  { href: toolPath(lang, 'passport-ranking'), label: ui.nav.ranking },
+  { href: toolPath(lang, 'compare'), label: ui.nav.compare },
+  { href: toolPath(lang, 'schengen-calculator'), label: ui.nav.schengen },
+];
 ---
 
-<!DOCTYPE html>
-<html lang={lang} dir={dir}>
-  <SEOHead {title} {description} {lang} {alternateLinks} />
-  <body class="min-h-screen bg-gray-50 font-sans antialiased">
-    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
-      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-        <a href={`/${lang}/`} class="text-xl font-bold text-indigo-700 flex items-center gap-2">
-          <span>🛂</span>
-          <span>PassportData</span>
+<!doctype html>
+<html lang={info.hreflang} dir={info.dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'} />
+    {Object.entries(alternates).map(([code, href]) => (
+      <link rel="alternate" hreflang={langInfo(code).hreflang} href={`${SITE_URL}${href}`} />
+    ))}
+    {defaultHref && Object.keys(alternates).length > 0 && <link rel="alternate" hreflang="x-default" href={`${SITE_URL}${defaultHref}`} />}
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={info.ogLocale} />
+    {Object.keys(alternates).filter((c) => c !== lang).map((c) => <meta property="og:locale:alternate" content={langInfo(c).ogLocale} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#312e81" />
+    <link rel="alternate" type="text/plain" title="LLM summary" href="/llms.txt" />
+    {VERIFICATION.google && <meta name="google-site-verification" content={VERIFICATION.google} />}
+    {VERIFICATION.bing && <meta name="msvalidate.01" content={VERIFICATION.bing} />}
+    {VERIFICATION.yandex && <meta name="yandex-verification" content={VERIFICATION.yandex} />}
+
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+
+    {(GA4_ID || ADSENSE_CLIENT) && <script is:inline set:html={consentScript} />}
+    {GA4_ID && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`} />}
+    {ADSENSE_CLIENT && (
+      <>
+        <meta name="google-adsense-account" content={ADSENSE_CLIENT} />
+        <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`} crossorigin="anonymous" />
+      </>
+    )}
+    {CF_ANALYTICS_TOKEN && (
+      <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: CF_ANALYTICS_TOKEN })} />
+    )}
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-800 antialiased flex flex-col">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 bg-white px-3 py-2 rounded shadow z-50">{ui.nav.skip}</a>
+    <header class="bg-white/95 backdrop-blur border-b border-slate-200 sticky top-0 z-40">
+      <div class="wrap flex items-center justify-between gap-3 h-14">
+        <a href={homePath(lang)} class="flex items-center gap-2 font-bold text-lg text-indigo-800 shrink-0" aria-label={SITE_NAME}>
+          <img src="/favicon.svg" alt="" width="28" height="28" />
+          <span>{SITE_NAME}</span>
         </a>
-        <div class="flex items-center gap-4">
-          <div class="hidden md:flex items-center gap-4 text-sm">
-            <a href={`/${lang}/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.home')}</a>
-            <a href={`/${lang}/passport-ranking/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.ranking')}</a>
-            <a href={`/${lang}/compare/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.compare')}</a>
-            <a href={`/${lang}/schengen-calculator/`} class="text-gray-600 hover:text-indigo-600 transition-colors">{t('nav.schengen')}</a>
-          </div>
-          <LanguageSwitcher {lang} {alternateLinks} />
+        <nav class="hidden md:flex items-center gap-5 text-sm font-medium" aria-label={ui.nav.menu}>
+          {nav.map((n) => <a href={n.href} class="text-slate-600 hover:text-indigo-700">{n.label}</a>)}
+        </nav>
+        <div class="flex items-center gap-2">
+          <details class="dropdown relative">
+            <summary class="btn-ghost" aria-label={ui.nav.language}>
+              <svg aria-hidden="true" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+              <span class="uppercase text-xs font-semibold">{lang}</span>
+            </summary>
+            <ul class="dropdown-menu end-0 w-48 max-h-[70vh] overflow-y-auto">
+              {LANGUAGES.map((l) => (
+                <li>
+                  <a
+                    href={langLinks[l.code] ?? alternates[l.code] ?? homePath(l.code)}
+                    hreflang={l.hreflang}
+                    lang={l.hreflang}
+                    class:list={['mlink', l.code === lang && 'font-semibold text-indigo-700']}
+                  >
+                    {l.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+          <details class="dropdown relative md:hidden">
+            <summary class="btn-ghost" aria-label={ui.nav.menu}>
+              <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </summary>
+            <ul class="dropdown-menu end-0 w-60">
+              {nav.map((n) => <li><a href={n.href} class="mlink">{n.label}</a></li>)}
+            </ul>
+          </details>
         </div>
       </div>
-    </nav>
+    </header>
 
-    <main>
+    <main id="main" class="flex-1">
       <slot />
     </main>
 
-    <footer class="bg-gray-900 text-gray-300 py-12 mt-16">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div>
-            <h3 class="text-white font-bold text-lg mb-3">🛂 PassportData</h3>
-            <p class="text-gray-400 text-sm">{t('footer.description')}</p>
-          </div>
-          <div>
-            <h4 class="text-white font-semibold mb-3">{t('footer.quick_links')}</h4>
-            <ul class="space-y-2 text-sm">
-              <li><a href={`/${lang}/passport-ranking/`} class="hover:text-white transition-colors">{t('nav.ranking')}</a></li>
-              <li><a href={`/${lang}/compare/`} class="hover:text-white transition-colors">{t('nav.compare')}</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-semibold mb-3">{t('footer.tools')}</h4>
-            <ul class="space-y-2 text-sm">
-              <li><a href={`/${lang}/schengen-calculator/`} class="hover:text-white transition-colors">{t('nav.schengen')}</a></li>
-            </ul>
-          </div>
+    <footer class="bg-slate-900 text-slate-400 text-sm mt-16">
+      <div class="wrap py-10 grid gap-8 md:grid-cols-3">
+        <div>
+          <p class="text-white font-bold text-base mb-2">{SITE_NAME}</p>
+          <p>{ui.meta.tagline}</p>
+          <p class="mt-3">{fmt(ui.footer.dataNote, { date: formatDate(lang, DATA_UPDATED) })}</p>
         </div>
-        <div class="border-t border-gray-800 pt-6">
-          <p class="text-sm text-gray-500 text-center">
-            {t('footer.last_updated')}: {new Date().toLocaleDateString(lang)} | {t('footer.source')}
-          </p>
-          <p class="text-xs text-gray-600 mt-2 text-center">{t('footer.disclaimer')}</p>
-          <p class="text-xs text-gray-600 mt-1 text-center">
-            {t('footer.copyright', { year: String(currentYear) })}
-          </p>
+        <ul class="space-y-2">
+          {nav.map((n) => <li><a href={n.href} class="hover:text-white">{n.label}</a></li>)}
+          <li><a href={toolPath(lang, 'about')} class="hover:text-white">{ui.footer.about}</a></li>
+          <li><a href={toolPath(lang, 'privacy')} class="hover:text-white">{ui.footer.privacy}</a></li>
+          <li><a href={toolPath(lang, 'terms')} class="hover:text-white">{ui.footer.terms}</a></li>
+          <li><a href="/api/v1/visa-requirements.json" class="hover:text-white">{ui.footer.data}</a></li>
+        </ul>
+        <ul class="flex flex-wrap gap-x-3 gap-y-1 content-start" aria-label={ui.nav.language}>
+          {LANGUAGES.map((l) => <li><a href={homePath(l.code)} hreflang={l.hreflang} lang={l.hreflang} class="hover:text-white">{l.name}</a></li>)}
+        </ul>
+      </div>
+      <div class="border-t border-slate-800">
+        <div class="wrap py-5 text-xs space-y-1.5">
+          <p>{ui.footer.disclaimer}</p>
+          {hasAffiliates && <p>{ui.footer.affiliate}</p>}
+          <p>{fmt(ui.footer.rights, { year })}</p>
         </div>
       </div>
     </footer>
-
-    <!-- Mobile menu toggle -->
-    <script>
-      // Mobile navigation could be added here if needed
-    </script>
   </body>
 </html>

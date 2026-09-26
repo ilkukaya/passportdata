@@ -1,0 +1,19 @@
+---
+import { getUI, num } from '../i18n';
+import { STATUSES, type Counts } from '../lib/data';
+interface Props { lang: string; counts: Counts }
+const { lang, counts } = Astro.props;
+const ui = getUI(lang);
+---
+<ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+  {STATUSES.filter((s) => s !== 'no_admission' || counts[s] > 0).map((s) => (
+    <li>
+      <a href={`#${s}`} class="card flex flex-col gap-1 p-4 hover:shadow-md transition-shadow h-full">
+        <span class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+          <span class={`h-2.5 w-2.5 rounded-full dot-${s}`}></span>{ui.status[s]}
+        </span>
+        <span class="text-3xl font-bold text-slate-900">{num(lang, counts[s])}</span>
+      </a>
+    </li>
+  ))}
+</ul>

@@ -1,0 +1,7 @@
+---
+import { flagUrl } from '../lib/data';
+interface Props { code: string; size?: 'sm' | 'md' | 'lg' | 'xl'; alt?: string; eager?: boolean }
+const { code, size = 'sm', alt = '', eager = false } = Astro.props;
+const dims = { sm: [24, 16], md: [36, 24], lg: [60, 40], xl: [96, 64] }[size];
+---
+<img src={flagUrl(code)} width={dims[0]} height={dims[1]} alt={alt} class="flag" loading={eager ? 'eager' : 'lazy'} />

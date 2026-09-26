@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CountrySearch from '../components/CountrySearch.astro';
+import { LANGUAGES, getUI } from '../i18n';
+import { homePath } from '../lib/data';
+const ui = getUI('en');
+---
+<BaseLayout lang="en" title={`${ui.notFound.title} | PassportData`} description={ui.notFound.text} path="/404/" noindex>
+  <section class="wrap py-16 text-center max-w-xl">
+    <p class="text-6xl font-bold text-indigo-200">404</p>
+    <h1 class="text-3xl mt-2">{ui.notFound.title}</h1>
+    <p class="mt-3 text-slate-600">{ui.notFound.text}</p>
+    <div class="mt-8 text-start"><CountrySearch lang="en" /></div>
+    <ul class="mt-8 flex flex-wrap justify-center gap-3 text-sm">
+      {LANGUAGES.map((l) => <li><a href={homePath(l.code)} class="text-indigo-700 hover:underline" hreflang={l.hreflang}>{l.name}</a></li>)}
+    </ul>
+  </section>
+</BaseLayout>

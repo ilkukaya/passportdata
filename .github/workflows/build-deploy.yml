@@ -1,35 +1,70 @@
-name: Build & Deploy to Netlify
+name: Build & deploy
 
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows: ['Weekly visa data update']
+    types: [completed]
   workflow_dispatch:
+    inputs:
+      indexnow:
+        description: 'Submit all URLs to IndexNow after deploying'
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      # Public configuration: Settings → Secrets and variables → Actions → Variables
+      SITE_URL: ${{ vars.SITE_URL }}
+      PUBLIC_CONTACT_EMAIL: ${{ vars.PUBLIC_CONTACT_EMAIL }}
+      PUBLIC_ADSENSE_CLIENT: ${{ vars.PUBLIC_ADSENSE_CLIENT }}
+      PUBLIC_ADSENSE_SLOT_TOP: ${{ vars.PUBLIC_ADSENSE_SLOT_TOP }}
+      PUBLIC_ADSENSE_SLOT_IN_CONTENT: ${{ vars.PUBLIC_ADSENSE_SLOT_IN_CONTENT }}
+      PUBLIC_ADSENSE_SLOT_BOTTOM: ${{ vars.PUBLIC_ADSENSE_SLOT_BOTTOM }}
+      PUBLIC_GA4_ID: ${{ vars.PUBLIC_GA4_ID }}
+      PUBLIC_CF_ANALYTICS_TOKEN: ${{ vars.PUBLIC_CF_ANALYTICS_TOKEN }}
+      PUBLIC_INDEXNOW_KEY: ${{ vars.PUBLIC_INDEXNOW_KEY }}
+      PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.PUBLIC_GOOGLE_SITE_VERIFICATION }}
+      PUBLIC_BING_SITE_VERIFICATION: ${{ vars.PUBLIC_BING_SITE_VERIFICATION }}
+      PUBLIC_YANDEX_VERIFICATION: ${{ vars.PUBLIC_YANDEX_VERIFICATION }}
+      PUBLIC_AFF_SAFETYWING: ${{ vars.PUBLIC_AFF_SAFETYWING }}
+      PUBLIC_AFF_AIRALO_URL: ${{ vars.PUBLIC_AFF_AIRALO_URL }}
+      PUBLIC_AFF_BOOKING_URL: ${{ vars.PUBLIC_AFF_BOOKING_URL }}
+      PUBLIC_AFF_IVISA_URL: ${{ vars.PUBLIC_AFF_IVISA_URL }}
+      NODE_OPTIONS: --max-old-space-size=6144
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Build Astro site
+      - name: Check translations
+        run: node --experimental-strip-types scripts/check-i18n.mjs
+
+      - name: Build
         run: npm run build
 
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './dist'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy ${{ github.sha }}"
+        run: npx --yes netlify-cli@17 deploy --prod --dir=dist --message "Deploy ${{ github.sha }}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Notify IndexNow (Bing, Yandex, …)
+        if: github.event_name == 'workflow_run' || inputs.indexnow
+        run: node scripts/indexnow.mjs

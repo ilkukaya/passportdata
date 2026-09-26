@@ -1,8 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-  theme: {
-    extend: {},
-  },
+  content: ['./src/**/*.{astro,html,js,ts}'],
+  safelist: [{ pattern: /^(s|dot)-(visa_free|visa_on_arrival|eta|e_visa|visa_required|no_admission)$/ }],
+  theme: { extend: {} },
   plugins: [],
 };

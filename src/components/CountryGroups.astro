@@ -1,0 +1,68 @@
+---
+import Flag from './Flag.astro';
+import { getUI, fmt, num } from '../i18n';
+import { STATUSES, countryName, sortByName, type Status } from '../lib/data';
+interface Props {
+  lang: string;
+  groups: Record<Status, string[]>;
+  heading: (s: Status) => string;
+  href: (code: string) => string;
+  days: (code: string) => number | null;
+}
+const { lang, groups, heading, href, days } = Astro.props;
+const ui = getUI(lang);
+---
+<div class="country-groups">
+  <label class="block max-w-md mb-6">
+    <span class="sr-only">{ui.common.filter}</span>
+    <input type="search" class="input group-filter" placeholder={ui.common.filter} autocomplete="off" />
+  </label>
+  {STATUSES.filter((s) => groups[s].length > 0).map((s) => (
+    <section id={s} class="mb-10 scroll-mt-20 group-section">
+      <h2 class="section-title flex items-center gap-2">
+        <span class={`h-3 w-3 rounded-full dot-${s} shrink-0`}></span>
+        <span>{heading(s)} <span class="text-slate-400 font-normal">({num(lang, groups[s].length)})</span></span>
+      </h2>
+      <p class="text-sm text-slate-600 mb-4 max-w-3xl">{ui.statusDesc[s]}</p>
+      <ul class="glist">
+        {sortByName(groups[s], lang).map((code) => {
+          const d = days(code);
+          const name = countryName(code, lang);
+          const en = countryName(code, 'en');
+          return (
+            <li data-n={(en === name ? name : `${name} ${en}`).toLowerCase()}>
+              <a href={href(code)} class="tile">
+                <Flag code={code} />
+                <span class="tname">{name}</span>
+                {d && <span class="tmeta">{fmt(ui.common.days, { n: num(lang, d) })}</span>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))}
+  <p class="no-results hidden text-slate-500">{ui.common.noResults}</p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.country-groups').forEach((root) => {
+    const input = root.querySelector<HTMLInputElement>('.group-filter');
+    const empty = root.querySelector<HTMLElement>('.no-results');
+    input?.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      let total = 0;
+      root.querySelectorAll<HTMLElement>('.group-section').forEach((section) => {
+        let visible = 0;
+        section.querySelectorAll<HTMLElement>('li[data-n]').forEach((li) => {
+          const show = !q || li.dataset.n!.includes(q);
+          li.hidden = !show;
+          if (show) visible++;
+        });
+        section.hidden = visible === 0;
+        total += visible;
+      });
+      empty?.classList.toggle('hidden', total > 0);
+    });
+  });
+</script>

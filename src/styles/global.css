@@ -4,41 +4,47 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial,
+      'Noto Sans Arabic', 'Noto Nastaliq Urdu', 'Noto Sans Devanagari', 'Noto Sans Bengali', sans-serif;
   }
-
-  [dir="rtl"] {
-    direction: rtl;
-    text-align: right;
-  }
+  h1, h2, h3 { @apply text-slate-900 font-bold tracking-tight; }
+  summary { list-style: none; }
+  summary::-webkit-details-marker { display: none; }
 }
 
 @layer components {
-  .visa-badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium;
-  }
+  .wrap { @apply mx-auto w-full max-w-6xl px-4; }
+  .card { @apply bg-white rounded-2xl border border-slate-200 shadow-sm; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 py-3 font-semibold text-white hover:bg-indigo-800 transition-colors disabled:opacity-50; }
+  .btn-ghost { @apply inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-slate-600 hover:bg-slate-100 cursor-pointer select-none; }
+  .dropdown-menu { @apply absolute mt-2 z-50 rounded-xl border border-slate-200 bg-white p-1.5 text-sm shadow-lg; }
+  .input { @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200; }
+  .section-title { @apply text-xl md:text-2xl mb-4; }
+  .flag { @apply inline-block rounded-sm object-cover shadow-[0_0_0_1px_rgba(0,0,0,0.08)] shrink-0; }
+  .prose-text p { @apply mb-4 leading-relaxed; }
+  .prose-text h2 { @apply text-xl mt-8 mb-3; }
 
-  .visa-badge-visa_free {
-    @apply bg-green-100 text-green-800;
-  }
+  .tile { @apply flex items-center gap-3 rounded-xl bg-white border border-slate-200 px-3 py-2.5 hover:border-indigo-300 hover:shadow-sm transition; }
+  .tile-sm { @apply flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-3 py-2 hover:border-indigo-300; }
+  .tname { @apply flex-1 truncate font-medium text-slate-800; }
+  .tmeta { @apply text-xs text-slate-500 whitespace-nowrap; }
+  .glist { @apply grid gap-2 sm:grid-cols-2 lg:grid-cols-3; }
+  .mlink { @apply block px-3 py-2 rounded hover:bg-slate-100; }
+  .badge { @apply inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+  .s-visa_free { @apply bg-emerald-100 text-emerald-800; }
+  .s-visa_on_arrival { @apply bg-teal-100 text-teal-800; }
+  .s-eta { @apply bg-sky-100 text-sky-800; }
+  .s-e_visa { @apply bg-amber-100 text-amber-800; }
+  .s-visa_required { @apply bg-rose-100 text-rose-800; }
+  .s-no_admission { @apply bg-slate-800 text-white; }
 
-  .visa-badge-visa_on_arrival {
-    @apply bg-yellow-100 text-yellow-800;
-  }
-
-  .visa-badge-e_visa {
-    @apply bg-blue-100 text-blue-800;
-  }
-
-  .visa-badge-visa_required {
-    @apply bg-red-100 text-red-800;
-  }
-
-  .stat-card {
-    @apply bg-white rounded-xl shadow-sm border p-4 text-center;
-  }
-
-  .container-narrow {
-    @apply container mx-auto px-4 max-w-6xl;
-  }
+  .dot-visa_free { @apply bg-emerald-500; }
+  .dot-visa_on_arrival { @apply bg-teal-500; }
+  .dot-eta { @apply bg-sky-500; }
+  .dot-e_visa { @apply bg-amber-500; }
+  .dot-visa_required { @apply bg-rose-500; }
+  .dot-no_admission { @apply bg-slate-800; }
 }
+
+details.dropdown:not([open]) > .dropdown-menu { display: none; }

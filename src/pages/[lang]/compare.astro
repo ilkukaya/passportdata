@@ -1,180 +1,178 @@
 ---
-import countries from '../../data/countries.json';
-import visaMatrix from '../../data/visa_matrix.json';
-import { SUPPORTED_LANGS, useTranslations, getToolPageAlternateLinks, isRTL, type Lang } from '../../utils/i18n';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { LANG_CODES, getUI, fmt } from '../../i18n';
+import { SITE_URL } from '../../config/site';
+import { CODES, countryName, countrySlug, homePath, toolPath, alternatesFor, sortByName, hasRoutes } from '../../lib/data';
+import { webPage, breadcrumbList } from '../../lib/schema';
 
 export function getStaticPaths() {
-  return SUPPORTED_LANGS.map(lang => ({ params: { lang } }));
+  return LANG_CODES.map((lang) => ({ params: { lang } }));
 }
 
-const { lang } = Astro.params;
-const t = useTranslations(lang as Lang);
-const currentYear = new Date().getFullYear();
-const alternateLinks = getToolPageAlternateLinks('compare');
-
-const title = t('seo.compare_title', { year: String(currentYear) });
-const description = t('seo.compare_description');
-
-const breadcrumbs = [
-  { label: t('nav.home'), href: `/${lang}/` },
-  { label: t('nav.compare') },
-];
-
-const countryList = Object.entries(countries as Record<string, any>)
-  .filter(([code]) => (visaMatrix as any).data[code])
-  .map(([code, data]) => ({
-    code,
-    name: data.names?.[lang] || data.names?.en || code,
-    flag_url: data.flag_url,
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name, lang));
-
-const matrixData = (visaMatrix as any).data;
+const { lang } = Astro.params as { lang: string };
+const ui = getUI(lang);
+const year = new Date().getUTCFullYear();
+const path = toolPath(lang, 'compare');
+const url = `${SITE_URL}${path}`;
+const title = fmt(ui.compare.title, { year });
+const description = ui.compare.description;
+const crumbs = [{ name: ui.nav.home, path: homePath(lang) }, { name: ui.nav.compare }];
+const sorted = sortByName(CODES, lang);
+const names = Object.fromEntries(CODES.map((c) => [c, countryName(c, lang)]));
+const slugs = Object.fromEntries(CODES.map((c) => [c, countrySlug(c, lang)]));
+const routes = CODES.filter((c) => hasRoutes(lang, c));
+const clientData = {
+  names,
+  status: ui.status,
+  str: { onlyFirst: ui.compare.onlyFirst, both: ui.compare.both, loading: ui.compare.loading, error: ui.compare.error, days: ui.common.days },
+  lang,
+};
+const jsonLd = [webPage({ url, name: title, description, lang, crumbs, type: 'WebApplication' }), breadcrumbList(url, crumbs)];
 ---
 
-<BaseLayout {title} {description} lang={lang!} {alternateLinks} rtl={isRTL(lang as Lang)}>
-  <BreadcrumbNav items={breadcrumbs} lang={lang!} />
-
-  <section class="bg-gradient-to-br from-indigo-900 to-purple-900 text-white py-10">
-    <div class="container mx-auto px-4 text-center">
-      <h1 class="text-2xl md:text-3xl font-bold mb-2">{t('tools.compare_title')}</h1>
-      <p class="text-indigo-200">{t('tools.compare_subtitle')}</p>
-    </div>
+<BaseLayout {lang} {title} {description} {path} alternates={alternatesFor((l) => toolPath(l, 'compare'))} {jsonLd}>
+  <Breadcrumbs items={crumbs} />
+  <section class="wrap mt-4">
+    <h1 class="text-3xl md:text-4xl">{ui.compare.h1}</h1>
+    <p class="mt-3 text-slate-700 max-w-3xl">{ui.compare.intro}</p>
   </section>
 
-  <section class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Passport 1</label>
-          <select id="passport-1" class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-indigo-300 focus:outline-none">
-            <option value="">{t('selector.choose_country')}</option>
-            {countryList.map(c => (
-              <option value={c.code}>{c.name}</option>
-            ))}
+  <section class="wrap mt-8" id="compare-app">
+    <div class="card p-5 md:p-6 grid gap-4 md:grid-cols-2">
+      {['a', 'b'].map((k) => (
+        <label class="block">
+          <span class="block text-sm font-semibold text-slate-700 mb-2">{k === 'a' ? ui.compare.first : ui.compare.second}</span>
+          <select id={`pass-${k}`} class="input">
+            <option value="">{ui.compare.choose}</option>
+            {sorted.map((c) => <option value={c}>{names[c]}</option>)}
           </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Passport 2</label>
-          <select id="passport-2" class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-indigo-300 focus:outline-none">
-            <option value="">{t('selector.choose_country')}</option>
-            {countryList.map(c => (
-              <option value={c.code}>{c.name}</option>
-            ))}
-          </select>
-        </div>
+        </label>
+      ))}
+    </div>
+    <p id="cmp-status" class="mt-4 text-slate-500" aria-live="polite"></p>
+    <div id="cmp-summary" class="mt-6 grid gap-4 md:grid-cols-3"></div>
+    <div id="cmp-table-wrap" class="mt-6 hidden">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="section-title !mb-0">{ui.compare.differences}</h2>
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="cmp-all" class="rounded" /> {ui.compare.showAll}</label>
       </div>
-
-      <div id="compare-results" class="hidden">
-        <div class="grid grid-cols-2 gap-4 mb-6" id="compare-stats"></div>
-        <div class="bg-white rounded-xl shadow-sm border overflow-hidden" id="compare-table-wrapper">
-          <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
-              <tr>
-                <th class="px-4 py-3 text-start">{t('table.country')}</th>
-                <th class="px-4 py-3 text-center" id="th-p1">Passport 1</th>
-                <th class="px-4 py-3 text-center" id="th-p2">Passport 2</th>
-              </tr>
-            </thead>
-            <tbody id="compare-body"></tbody>
-          </table>
-        </div>
+      <div class="card overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
+            <tr><th scope="col" class="px-4 py-3 text-start">{ui.common.destination}</th><th scope="col" id="th-a" class="px-4 py-3 text-start"></th><th scope="col" id="th-b" class="px-4 py-3 text-start"></th></tr>
+          </thead>
+          <tbody id="cmp-body" class="divide-y divide-slate-100"></tbody>
+        </table>
       </div>
     </div>
   </section>
+
+  <AdSlot slot="bottom" />
+
+  <script type="application/json" id="cmp-data" set:html={JSON.stringify({ ...clientData, slugs, routes })} />
 </BaseLayout>
 
-<script define:vars={{ matrixData, countries, lang }}>
-  const statusOrder = { visa_free: 0, visa_on_arrival: 1, e_visa: 2, visa_required: 3 };
-  const statusColors = {
-    visa_free: 'bg-green-100 text-green-800',
-    visa_on_arrival: 'bg-yellow-100 text-yellow-800',
-    e_visa: 'bg-blue-100 text-blue-800',
-    visa_required: 'bg-red-100 text-red-800',
-  };
-  const statusLabels = {
-    visa_free: 'Visa-Free',
-    visa_on_arrival: 'Visa on Arrival',
-    e_visa: 'E-Visa',
-    visa_required: 'Visa Required',
-  };
+<script>
+  type Req = [string, number?];
+  const data = JSON.parse(document.getElementById('cmp-data')!.textContent!);
+  const OPEN = new Set(['visa_free', 'visa_on_arrival', 'eta']);
+  const ORDER = ['visa_free', 'visa_on_arrival', 'eta', 'e_visa', 'visa_required', 'no_admission'];
+  const selA = document.getElementById('pass-a') as HTMLSelectElement;
+  const selB = document.getElementById('pass-b') as HTMLSelectElement;
+  const statusEl = document.getElementById('cmp-status')!;
+  const summary = document.getElementById('cmp-summary')!;
+  const wrap = document.getElementById('cmp-table-wrap')!;
+  const body = document.getElementById('cmp-body')!;
+  const all = document.getElementById('cmp-all') as HTMLInputElement;
+  const cache = new Map<string, Record<string, Req>>();
+  const collator = new Intl.Collator(data.lang);
+  const fill = (t: string, v: Record<string, string>) => t.replace(/\{(\w+)\}/g, (m, k) => v[k] ?? m);
 
-  function getStats(data) {
-    const vals = Object.values(data || {});
-    return {
-      visa_free: vals.filter(v => v.status === 'visa_free').length,
-      visa_on_arrival: vals.filter(v => v.status === 'visa_on_arrival').length,
-      e_visa: vals.filter(v => v.status === 'e_visa').length,
-      visa_required: vals.filter(v => v.status === 'visa_required').length,
-    };
+  async function load(code: string) {
+    if (!cache.has(code)) {
+      const res = await fetch(`/api/v1/passports/${code}.json`);
+      if (!res.ok) throw new Error(String(res.status));
+      cache.set(code, (await res.json()).requirements);
+    }
+    return cache.get(code)!;
+  }
+  const badge = (s: string, days?: number) => {
+    const span = document.createElement('span');
+    span.className = `badge s-${s}`;
+    span.textContent = data.status[s] + (days ? ` · ${fill(data.str.days, { n: String(days) })}` : '');
+    return span;
+  };
+  const flag = (c: string) => {
+    const img = document.createElement('img');
+    img.src = `/flags/${c.toLowerCase()}.svg`; img.width = 24; img.height = 16; img.alt = ''; img.className = 'flag'; img.loading = 'lazy';
+    return img;
+  };
+  function card(label: string, value: number) {
+    const div = document.createElement('div');
+    div.className = 'card p-5';
+    div.innerHTML = '<p class="text-sm text-slate-600"></p><p class="text-3xl font-bold text-slate-900 mt-1"></p>';
+    div.children[0].textContent = label;
+    div.children[1].textContent = String(value);
+    return div;
   }
 
-  function compare() {
-    const p1 = document.getElementById('passport-1').value;
-    const p2 = document.getElementById('passport-2').value;
-    if (!p1 || !p2) { document.getElementById('compare-results').classList.add('hidden'); return; }
-
-    const d1 = matrixData[p1] || {};
-    const d2 = matrixData[p2] || {};
-    const s1 = getStats(d1);
-    const s2 = getStats(d2);
-
-    const n1 = countries[p1]?.names?.[lang] || p1;
-    const n2 = countries[p2]?.names?.[lang] || p2;
-    document.getElementById('th-p1').textContent = n1;
-    document.getElementById('th-p2').textContent = n2;
-
-    // Stats
-    const statsHtml = `
-      <div class="bg-white rounded-xl shadow-sm border p-4">
-        <h3 class="font-bold text-gray-900 mb-3">${n1}</h3>
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-green-700">Visa-Free</span><span class="font-bold">${s1.visa_free}</span></div>
-          <div class="flex justify-between"><span class="text-yellow-700">Visa on Arrival</span><span class="font-bold">${s1.visa_on_arrival}</span></div>
-          <div class="flex justify-between"><span class="text-blue-700">E-Visa</span><span class="font-bold">${s1.e_visa}</span></div>
-          <div class="flex justify-between"><span class="text-red-700">Visa Required</span><span class="font-bold">${s1.visa_required}</span></div>
-        </div>
-      </div>
-      <div class="bg-white rounded-xl shadow-sm border p-4">
-        <h3 class="font-bold text-gray-900 mb-3">${n2}</h3>
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-green-700">Visa-Free</span><span class="font-bold">${s2.visa_free}</span></div>
-          <div class="flex justify-between"><span class="text-yellow-700">Visa on Arrival</span><span class="font-bold">${s2.visa_on_arrival}</span></div>
-          <div class="flex justify-between"><span class="text-blue-700">E-Visa</span><span class="font-bold">${s2.e_visa}</span></div>
-          <div class="flex justify-between"><span class="text-red-700">Visa Required</span><span class="font-bold">${s2.visa_required}</span></div>
-        </div>
-      </div>`;
-    document.getElementById('compare-stats').innerHTML = statsHtml;
-
-    // Table
-    const allDests = new Set([...Object.keys(d1), ...Object.keys(d2)]);
-    const rows = [...allDests]
-      .filter(code => countries[code])
-      .map(code => {
-        const v1 = d1[code]?.status || 'visa_required';
-        const v2 = d2[code]?.status || 'visa_required';
-        const name = countries[code]?.names?.[lang] || code;
-        const flag = countries[code]?.flag_url || '';
-        return { code, name, flag, v1, v2, diff: statusOrder[v1] - statusOrder[v2] };
-      })
-      .sort((a, b) => a.diff - b.diff);
-
-    document.getElementById('compare-body').innerHTML = rows.map(r => `
-      <tr class="border-t hover:bg-gray-50">
-        <td class="px-4 py-2 flex items-center gap-2">
-          <img src="${r.flag}" class="w-6 h-4 object-cover rounded" alt="${r.name}" />
-          <span class="text-sm">${r.name}</span>
-        </td>
-        <td class="px-4 py-2 text-center"><span class="visa-badge visa-badge-${r.v1} text-xs">${statusLabels[r.v1]}</span></td>
-        <td class="px-4 py-2 text-center"><span class="visa-badge visa-badge-${r.v2} text-xs">${statusLabels[r.v2]}</span></td>
-      </tr>
-    `).join('');
-
-    document.getElementById('compare-results').classList.remove('hidden');
+  async function run() {
+    const a = selA.value, b = selB.value;
+    const params = new URLSearchParams();
+    if (a) params.set('a', a);
+    if (b) params.set('b', b);
+    history.replaceState(null, '', params.toString() ? `?${params}` : location.pathname);
+    summary.replaceChildren();
+    wrap.classList.add('hidden');
+    if (!a || !b || a === b) return;
+    statusEl.textContent = data.str.loading;
+    try {
+      const [ra, rb] = await Promise.all([load(a), load(b)]);
+      statusEl.textContent = '';
+      document.getElementById('th-a')!.textContent = data.names[a];
+      document.getElementById('th-b')!.textContent = data.names[b];
+      const dests = Object.keys(data.names).filter((d) => d !== a && d !== b);
+      let onlyA = 0, onlyB = 0, both = 0;
+      for (const d of dests) {
+        const oa = OPEN.has(ra[d]?.[0]), ob = OPEN.has(rb[d]?.[0]);
+        if (oa && ob) both++; else if (oa) onlyA++; else if (ob) onlyB++;
+      }
+      summary.append(
+        card(fill(data.str.onlyFirst, { name: data.names[a] }), onlyA),
+        card(data.str.both, both),
+        card(fill(data.str.onlyFirst, { name: data.names[b] }), onlyB),
+      );
+      const rows = dests
+        .filter((d) => all.checked || ra[d]?.[0] !== rb[d]?.[0])
+        .sort((x, y) => ORDER.indexOf(ra[x]?.[0]) - ORDER.indexOf(ra[y]?.[0]) || collator.compare(data.names[x], data.names[y]));
+      body.replaceChildren(...rows.map((d) => {
+        const tr = document.createElement('tr');
+        const td0 = document.createElement('td');
+        td0.className = 'px-4 py-2';
+        const link = document.createElement('a');
+        link.className = 'flex items-center gap-2 font-medium hover:text-indigo-700';
+        link.href = pairHref(a, d);
+        link.append(flag(d), document.createTextNode(data.names[d]));
+        td0.append(link);
+        const td1 = document.createElement('td'); td1.className = 'px-4 py-2'; if (ra[d]) td1.append(badge(ra[d][0], ra[d][1]));
+        const td2 = document.createElement('td'); td2.className = 'px-4 py-2'; if (rb[d]) td2.append(badge(rb[d][0], rb[d][1]));
+        tr.append(td0, td1, td2);
+        return tr;
+      }));
+      wrap.classList.remove('hidden');
+    } catch {
+      statusEl.textContent = data.str.error;
+    }
   }
+  const routes = new Set<string>(data.routes);
+  const pairHref = (from: string, to: string) =>
+    routes.has(from) ? `/${data.lang}/${data.slugs[from]}/to/${data.slugs[to]}/` : `/${data.lang}/visit/${data.slugs[to]}/`;
 
-  document.getElementById('passport-1').addEventListener('change', compare);
-  document.getElementById('passport-2').addEventListener('change', compare);
+  const qs = new URLSearchParams(location.search);
+  if (qs.get('a')) selA.value = qs.get('a')!.toUpperCase();
+  if (qs.get('b')) selB.value = qs.get('b')!.toUpperCase();
+  [selA, selB, all].forEach((el) => el.addEventListener('change', run));
+  run();
 </script>

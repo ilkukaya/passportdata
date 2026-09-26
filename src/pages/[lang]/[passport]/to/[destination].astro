@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../../components/Breadcrumbs.astro';
+import Flag from '../../../../components/Flag.astro';
+import StatusBadge from '../../../../components/StatusBadge.astro';
+import Faq from '../../../../components/Faq.astro';
+import AdSlot from '../../../../components/AdSlot.astro';
+import Affiliates from '../../../../components/Affiliates.astro';
+import { LANG_CODES, getUI, fmt, num, formatDate } from '../../../../i18n';
+import { POPULAR_DESTINATIONS, POPULAR_PASSPORTS, SITE_URL } from '../../../../config/site';
+import {
+  CODES, DATA_UPDATED, countryName, countrySlug, passportPath, routePath, visitPath, homePath, pairPath, hasRoutes,
+  alternatesFor, routeLangs, requirement, type Requirement,
+} from '../../../../lib/data';
+import { webPage, breadcrumbList, faqPage, type QA } from '../../../../lib/schema';
+
+export function getStaticPaths() {
+  const paths = [];
+  for (const lang of LANG_CODES) {
+    for (const from of CODES) {
+      if (!hasRoutes(lang, from)) continue;
+      for (const to of CODES) {
+        if (to === from) continue;
+        paths.push({
+          params: { lang, passport: countrySlug(from, lang), destination: countrySlug(to, lang) },
+          props: { from, to, req: requirement(from, to)! },
+        });
+      }
+    }
+  }
+  return paths;
+}
+
+const { lang } = Astro.params as { lang: string };
+const { from, to, req } = Astro.props as { from: string; to: string; req: Requirement };
+const ui = getUI(lang);
+const r = ui.route;
+const year = new Date().getUTCFullYear();
+const origin = countryName(from, lang);
+const destination = countryName(to, lang);
+const date = formatDate(lang, DATA_UPDATED);
+const vars = { origin, destination, year, date };
+const answer = fmt(r.answer[req.status], vars);
+const stay = req.days ? fmt(r.stay, { n: num(lang, req.days) }) : req.status === 'visa_required' || req.status === 'no_admission' ? '' : r.stayUnknown;
+const path = routePath(lang, from, to);
+const url = `${SITE_URL}${path}`;
+const title = fmt(r.title, vars);
+const description = fmt(r.description, { ...vars, answer: [answer, stay].filter(Boolean).join(' ') });
+
+const reverse = requirement(to, from);
+const needsApplication = ['eta', 'e_visa', 'visa_on_arrival', 'visa_required'].includes(req.status);
+const prepare = [
+  r.prepare.passport,
+  r.prepare.ticket,
+  r.prepare.accommodation,
+  r.prepare.funds,
+  r.prepare.insurance,
+  ...(needsApplication && req.status !== 'visa_on_arrival' ? [r.prepare.application] : []),
+];
+
+const otherDest = POPULAR_DESTINATIONS.filter((d) => d !== from && d !== to).slice(0, 12);
+const otherPass = POPULAR_PASSPORTS.filter((p) => p !== from && p !== to).slice(0, 12);
+
+const faq: QA[] = [
+  { q: fmt(r.h1, vars), a: [answer, stay].filter(Boolean).join(' ') },
+  ...(req.status !== 'no_admission' ? [{ q: fmt(r.faq.q2, vars), a: stay || r.stayUnknown }] : []),
+  { q: fmt(r.faq.q3, vars), a: fmt(r.faq.a3, vars) },
+];
+const crumbs = [
+  { name: ui.nav.home, path: homePath(lang) },
+  { name: origin, path: passportPath(lang, from) },
+  { name: destination },
+];
+const jsonLd = [
+  webPage({ url, name: title, description, lang, crumbs }),
+  breadcrumbList(url, crumbs),
+  faqPage(url, faq),
+];
+---
+
+<BaseLayout
+  {lang}
+  {title}
+  {description}
+  {path}
+  alternates={alternatesFor((l) => routePath(l, from, to), routeLangs(from))}
+  langLinks={alternatesFor((l) => pairPath(l, from, to))}
+  {jsonLd}
+>
+  <Breadcrumbs items={crumbs} />
+
+  <section class="wrap mt-4">
+    <div class="card p-6 md:p-8">
+      <div class="flex items-center justify-center gap-4 md:gap-8 mb-6">
+        <a href={passportPath(lang, from)} class="text-center"><Flag code={from} size="lg" eager /><span class="block mt-2 text-sm font-semibold">{origin}</span></a>
+        <span class="text-3xl text-slate-300 rtl:rotate-180" aria-hidden="true">→</span>
+        <a href={visitPath(lang, to)} class="text-center"><Flag code={to} size="lg" eager /><span class="block mt-2 text-sm font-semibold">{destination}</span></a>
+      </div>
+      <h1 class="text-2xl md:text-3xl text-center">{fmt(r.h1, vars)}</h1>
+      <div class="mt-6 flex flex-col items-center gap-3 text-center">
+        <StatusBadge {lang} status={req.status} class="!text-base !px-4 !py-1.5" />
+        <p class="text-lg text-slate-800 max-w-2xl leading-relaxed" data-answer>{answer}</p>
+        {stay && <p class="text-slate-600">{stay}</p>}
+        <p class="text-sm text-slate-500 max-w-2xl">{ui.statusDesc[req.status]}</p>
+        <p class="text-xs text-slate-400">{fmt(ui.common.updated, { date })}</p>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot slot="top" />
+
+  {req.status !== 'no_admission' && (
+    <section class="wrap mt-10">
+      <h2 class="section-title">{r.prepareTitle}</h2>
+      <ul class="card divide-y divide-slate-100">
+        {prepare.map((item) => (
+          <li class="flex gap-3 px-5 py-3"><span class="text-emerald-600" aria-hidden="true">✓</span><span>{item}</span></li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {reverse && (
+    <section class="wrap mt-10">
+      <h2 class="section-title">{r.reverseTitle}</h2>
+      <a href={pairPath(lang, to, from)} class="card flex items-center gap-4 p-5 hover:shadow-md transition-shadow">
+        <Flag code={to} size="md" /><span aria-hidden="true" class="rtl:rotate-180">→</span><Flag code={from} size="md" />
+        <span class="flex-1">{fmt(r.reverse, { ...vars, status: ui.status[reverse.status] })}</span>
+        <StatusBadge {lang} status={reverse.status} />
+      </a>
+    </section>
+  )}
+
+  <Faq title={ui.common.faq} items={faq} />
+
+  <Affiliates {lang} visa={req.status === 'e_visa' || req.status === 'eta'} />
+
+  <AdSlot slot="inContent" />
+
+  <section class="wrap mt-12 grid gap-8 lg:grid-cols-2">
+    <div>
+      <h2 class="section-title">{fmt(r.otherDestinations, vars)}</h2>
+      <ul class="grid gap-2 sm:grid-cols-2">
+        {otherDest.map((d) => {
+          const q = requirement(from, d)!;
+          return (
+            <li><a href={pairPath(lang, from, d)} class="tile-sm">
+              <Flag code={d} /><span class="tname text-sm">{countryName(d, lang)}</span><StatusBadge {lang} status={q.status} />
+            </a></li>
+          );
+        })}
+      </ul>
+    </div>
+    <div>
+      <h2 class="section-title">{fmt(r.otherPassports, vars)}</h2>
+      <ul class="grid gap-2 sm:grid-cols-2">
+        {otherPass.map((o) => {
+          const q = requirement(o, to)!;
+          return (
+            <li><a href={pairPath(lang, o, to)} class="tile-sm">
+              <Flag code={o} /><span class="tname text-sm">{countryName(o, lang)}</span><StatusBadge {lang} status={q.status} />
+            </a></li>
+          );
+        })}
+      </ul>
+      <a href={visitPath(lang, to)} class="inline-block mt-3 text-sm font-semibold text-indigo-700 hover:underline">{fmt(ui.visit.link, vars)} →</a>
+    </div>
+  </section>
+
+  <section class="wrap mt-10"><p class="text-sm text-slate-500 max-w-4xl">{ui.common.officialCheck}</p></section>
+</BaseLayout>

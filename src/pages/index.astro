@@ -1,227 +1,53 @@
 ---
-import countries from '../data/countries.json';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CountrySearch from '../components/CountrySearch.astro';
+import { LANGUAGES, getUI } from '../i18n';
+import { SITE_URL } from '../config/site';
+import { homePath, alternatesFor } from '../lib/data';
+import { webPage } from '../lib/schema';
 
-const SUPPORTED_LANGS = [
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-  { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-];
-
-const POPULAR_COUNTRIES = ['US', 'DE', 'GB', 'TR', 'IN', 'BR', 'CN', 'JP', 'FR', 'PK'];
-
-const countryList = Object.entries(countries as Record<string, any>)
-  .map(([code, data]) => ({
-    code,
-    name: data.names?.en || code,
-    flag_url: data.flag_url,
-    slugs: data.slugs,
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name));
-
-const popularData = POPULAR_COUNTRIES
-  .filter(code => (countries as any)[code])
-  .map(code => ({
-    code,
-    name: (countries as any)[code].names.en,
-    flag_url: (countries as any)[code].flag_url,
-    slugs: (countries as any)[code].slugs,
-  }));
+const ui = getUI('en');
+const title = ui.landing.title;
+const description = ui.meta.homeDescription;
+const jsonLd = [webPage({ url: `${SITE_URL}/`, name: title, description, lang: 'en' })];
 ---
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PassportData — Global Visa & Passport Information</title>
-  <meta name="description" content="Select your country and see visa requirements for all destinations worldwide. Available in 6 languages." />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <script defer data-domain="passportdata.netlify.app" src="https://plausible.io/js/script.js"></script>
-</head>
-<body class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 flex items-center justify-center p-4">
-  <div class="w-full max-w-lg">
-    <div class="text-center mb-8">
-      <div class="text-5xl mb-3">🌍</div>
-      <h1 class="text-3xl font-bold text-white mb-2">PassportData</h1>
-      <p class="text-blue-300 text-lg">How powerful is your passport?</p>
+<BaseLayout lang="en" {title} {description} path="/" alternates={alternatesFor(homePath)} xDefault="/" {jsonLd}>
+  <section class="bg-gradient-to-br from-indigo-950 via-indigo-900 to-sky-900 text-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h1 class="!text-white text-3xl md:text-5xl mb-4">{ui.home.h1}</h1>
+      <p class="text-indigo-100 text-lg max-w-2xl mx-auto mb-8">{ui.home.lead}</p>
+      <div class="max-w-xl mx-auto"><CountrySearch lang="en" dark placeholder={ui.common.selectPassport} /></div>
     </div>
+  </section>
+  <section class="wrap mt-12">
+    <h2 class="section-title text-center">{ui.landing.choose}</h2>
+    <p id="lang-suggest" class="hidden text-center mb-6"></p>
+    <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      {LANGUAGES.map((l) => (
+        <li>
+          <a href={homePath(l.code)} hreflang={l.hreflang} lang={l.hreflang} dir={l.dir} data-lang={l.code}
+             class="lang-card card block p-4 text-center font-semibold text-slate-800 hover:shadow-md hover:text-indigo-700 transition">
+            {l.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
 
-    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/10">
-      <!-- Country Search -->
-      <div class="mb-4 relative">
-        <label class="block text-blue-200 text-sm font-medium mb-2">🗺️ Select your passport country</label>
-        <input
-          id="country-search"
-          type="text"
-          placeholder="Search country..."
-          autocomplete="off"
-          class="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-blue-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-        />
-        <div id="country-dropdown" class="hidden absolute left-0 right-0 mt-1 bg-slate-800 rounded-xl shadow-xl max-h-60 overflow-y-auto z-50 border border-slate-700">
-        </div>
-        <input type="hidden" id="selected-country" value="" />
-      </div>
-
-      <!-- Language Select -->
-      <div class="mb-6">
-        <label class="block text-blue-200 text-sm font-medium mb-2">🌐 Choose your language</label>
-        <div class="grid grid-cols-3 gap-2" id="lang-selector">
-          {SUPPORTED_LANGS.map(l => (
-            <button
-              data-lang={l.code}
-              class:list={[
-                'lang-btn px-3 py-2 rounded-lg text-sm font-medium transition-all border border-white/20 text-white hover:bg-white/20',
-                l.code === 'en' ? 'bg-blue-600 border-blue-500' : ''
-              ]}
-            >
-              {l.flag} {l.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <!-- CTA -->
-      <button
-        id="go-btn"
-        disabled
-        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl text-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
-      >
-        Show Visa Requirements →
-      </button>
-
-      <!-- Popular -->
-      <div class="mt-5 text-center">
-        <p class="text-blue-400 text-xs mb-2">Most searched:</p>
-        <div class="flex flex-wrap justify-center gap-1.5">
-          {popularData.map(c => (
-            <button
-              class="popular-btn flex items-center gap-1 px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs text-blue-200 transition-colors"
-              data-code={c.code}
-              data-name={c.name}
-            >
-              <img src={c.flag_url} class="w-4 h-3 object-cover rounded-sm" alt={c.name} />
-              {c.name}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-
-    <p class="text-center text-blue-400/50 text-xs mt-6">© {new Date().getFullYear()} PassportData. All rights reserved.</p>
-  </div>
-
-  <script define:vars={{ countryList }}>
-    const allCountries = countryList;
-    let selectedCountryCode = '';
-    let selectedLang = 'en';
-
-    // Detect browser language
-    const browserLang = navigator.language?.slice(0, 2);
-    if (['tr', 'es', 'ar', 'pt', 'fr'].includes(browserLang)) {
-      selectedLang = browserLang;
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'border-blue-500');
-        if (btn.dataset.lang === selectedLang) {
-          btn.classList.add('bg-blue-600', 'border-blue-500');
-        }
-      });
-    }
-
-    // Load saved preferences
-    const savedCountry = localStorage.getItem('pd_country');
-    const savedLang = localStorage.getItem('pd_lang');
-    if (savedLang) {
-      selectedLang = savedLang;
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'border-blue-500');
-        if (btn.dataset.lang === selectedLang) {
-          btn.classList.add('bg-blue-600', 'border-blue-500');
-        }
-      });
-    }
-
-    // Auto-redirect if both saved
-    if (savedCountry && savedLang) {
-      const c = allCountries.find(c => c.code === savedCountry);
-      if (c) {
-        const slug = c.slugs?.[savedLang] || c.slugs?.en || savedCountry.toLowerCase();
-        window.location.href = `/${savedLang}/${slug}/`;
-      }
-    }
-
-    // Language selection
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.lang-btn').forEach(b => {
-          b.classList.remove('bg-blue-600', 'border-blue-500');
-        });
-        btn.classList.add('bg-blue-600', 'border-blue-500');
-        selectedLang = btn.dataset.lang;
-        localStorage.setItem('pd_lang', selectedLang);
-      });
-    });
-
-    // Country search
-    const searchInput = document.getElementById('country-search');
-    const dropdown = document.getElementById('country-dropdown');
-    const goBtn = document.getElementById('go-btn');
-
-    function selectCountry(code, name) {
-      selectedCountryCode = code;
-      searchInput.value = name;
-      dropdown.classList.add('hidden');
-      goBtn.disabled = false;
-      localStorage.setItem('pd_country', code);
-    }
-
-    searchInput.addEventListener('input', () => {
-      const q = searchInput.value.toLowerCase();
-      if (!q) { dropdown.classList.add('hidden'); return; }
-      const results = allCountries
-        .filter(c => c.name.toLowerCase().includes(q))
-        .slice(0, 8);
-      if (results.length === 0) { dropdown.classList.add('hidden'); return; }
-      dropdown.innerHTML = results.map(c =>
-        `<div class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 cursor-pointer text-white transition-colors"
-              data-code="${c.code}" data-name="${c.name}">
-          <img src="${c.flag_url}" class="w-7 h-5 object-cover rounded" alt="${c.name}" />
-          <span>${c.name}</span>
-        </div>`
-      ).join('');
-      dropdown.classList.remove('hidden');
-
-      dropdown.querySelectorAll('[data-code]').forEach(item => {
-        item.addEventListener('click', () => {
-          selectCountry(item.dataset.code, item.dataset.name);
-        });
-      });
-    });
-
-    // Popular country buttons
-    document.querySelectorAll('.popular-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        selectCountry(btn.dataset.code, btn.dataset.name);
-      });
-    });
-
-    // Close dropdown on outside click
-    document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.add('hidden');
-      }
-    });
-
-    // Go button
-    goBtn.addEventListener('click', () => {
-      if (!selectedCountryCode) return;
-      const c = allCountries.find(c => c.code === selectedCountryCode);
-      const slug = c?.slugs?.[selectedLang] || c?.slugs?.en || selectedCountryCode.toLowerCase();
-      window.location.href = `/${selectedLang}/${slug}/`;
-    });
-  </script>
-</body>
-</html>
+<script>
+  // Highlight (never force-redirect) the visitor's preferred language.
+  const codes = [...document.querySelectorAll<HTMLAnchorElement>('.lang-card')].map((a) => a.dataset.lang!);
+  const pref = (navigator.languages || [navigator.language]).map((l) => l.slice(0, 2).toLowerCase()).find((l) => codes.includes(l));
+  if (pref) {
+    const card = document.querySelector<HTMLAnchorElement>(`.lang-card[data-lang="${pref}"]`)!;
+    card.classList.add('ring-2', 'ring-indigo-500');
+    const hint = document.getElementById('lang-suggest')!;
+    const a = document.createElement('a');
+    a.href = card.href;
+    a.className = 'btn';
+    a.textContent = `${card.textContent!.trim()} →`;
+    hint.append(a);
+    hint.classList.remove('hidden');
+  }
+</script>
